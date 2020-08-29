@@ -1,4 +1,4 @@
-{ pkgs, callPackage, wxGTK30, openssl_1_0_2 }:
+{ pkgs, callPackage, wxGTK30, openssl_1_0_2, util ? import ../../../util.nix }:
 
 let
   buildOptsFromR22 = {
@@ -7,10 +7,10 @@ let
     parallelBuild = true;
   };
 
-  variantsFromR18 = {
-    odbc = { odbcSupport = true; };
-    javac = { javacSupport = true; };
-    nox = { wxSupport = false; };
+  featureOptsFromR18 = {
+    _odbc = { odbcSupport = true; };
+    _javac = { javacSupport = true; };
+    _nox = { wxSupport = false; };
   };
 
   targets = [
@@ -24,12 +24,12 @@ let
         '';
       };
       buildOpts = buildOptsFromR22;
-      variants = variantsFromR18;
+      featureOpts = featureOptsFromR18;
     }
 
     {
       buildOpts = buildOptsFromR22;
-      variants = variantsFromR18;
+      featureOpts = featureOptsFromR18;
 
       release = {
         version = "23.0.3";
@@ -44,7 +44,7 @@ let
 
     {
       buildOpts = { };
-      variants = { odbc = { odbcSupport = true; }; };
+      featureOpts = { odbc = { odbcSupport = true; }; };
 
       release = {
         baseName = "erlang";
@@ -113,14 +113,22 @@ let
     }
   ];
 
-  list = map ({ release, buildOpts, variants }:
+  variantsPerTarget = map ({ release, buildOpts, featureOpts }:
     let
-      builder = callPackage ./generic-builder.nix buildOpts;
-      mkDerivation = pkgs.makeOverridable builder;
-    in {
-      name =
-        "erlang_${builtins.replaceStrings [ "." ] [ "_" ] release.version}";
-      value = mkDerivation release;
-    }) targets;
+      featureVariants = util.optionComb featureOpts;
+      variants = builtins.map ({ name, value }:
+        let
+          # fullBuildOpts = buildOpts // value;
+          builder = callPackage ./generic-builder.nix buildOpts;
+          mkDerivation = pkgs.makeOverridable builder;
+        in {
+          name = "erlang_${
+              builtins.replaceStrings [ "." ] [ "_" ] release.version
+            }${name}";
+          value = (mkDerivation release).override (value);
+        }) (util.attrsToList featureVariants);
+    in variants) targets;
 
-in builtins.listToAttrs list
+  variants = builtins.concatLists variantsPerTarget;
+
+in (builtins.listToAttrs variants)
