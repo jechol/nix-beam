@@ -28,7 +28,7 @@ rec {
   */
   callErlang = drv: args:
     let
-      builder = callPackage ../../development/interpreters/erlang/generic-builder.nix args;
+      builder = callPackage ../interpreters/erlang/generic-builder.nix args;
     in
       callPackage drv {
         mkDerivation = pkgs.makeOverridable builder;
