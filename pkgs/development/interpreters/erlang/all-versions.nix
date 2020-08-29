@@ -44,7 +44,7 @@ let
 
     {
       buildOpts = { };
-      featureOpts = { odbc = { odbcSupport = true; }; };
+      featureOpts = { _odbc = { odbcSupport = true; }; };
 
       release = {
         baseName = "erlang";
@@ -116,17 +116,24 @@ let
   variantsPerTarget = map ({ release, buildOpts, featureOpts }:
     let
       featureVariants = util.optionComb featureOpts;
+      featureList = util.attrsToList featureVariants;
       variants = builtins.map ({ name, value }:
         let
           # fullBuildOpts = buildOpts // value;
           builder = callPackage ./generic-builder.nix buildOpts;
           mkDerivation = pkgs.makeOverridable builder;
+          pkg_path = "erlang_${
+                        builtins.replaceStrings [ "." ] [ "_" ] release.version
+                      }${name}";
+          pkg_name = "erlang-${release.version}${builtins.replaceStrings [ "_" ] [ "-" ] name}";
+          pkg = mkDerivation release;
+          pkg_with_feature = pkg.override value;
+          pkg_renamed = pkg_with_feature // {name = pkg_name;};
+          # pkg_drv = (mkDerivation release).override value;
         in {
-          name = "erlang_${
-              builtins.replaceStrings [ "." ] [ "_" ] release.version
-            }${name}";
-          value = (mkDerivation release).override (value);
-        }) (util.attrsToList featureVariants);
+          name = pkg_path;
+          value = pkg_renamed;
+        }) featureList;
     in variants) targets;
 
   variants = builtins.concatLists variantsPerTarget;

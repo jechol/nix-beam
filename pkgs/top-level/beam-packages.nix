@@ -3,8 +3,8 @@
 rec {
   lib = callPackage ../development/beam-modules/lib.nix { };
 
-  all-erlang =
-    callPackage ../development/interpreters/erlang/all-versions.nix { };
+  # all-erlang =
+  #   callPackage ../development/interpreters/erlang/all-versions.nix { };
 
   # Each
   interpreters = rec {
@@ -128,4 +128,4 @@ rec {
     erlangR19 = packagesWith interpreters.erlangR19;
     erlangR18 = packagesWith interpreters.erlangR18;
   };
-}
+} 
