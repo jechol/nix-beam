@@ -6,9 +6,9 @@ rec {
       let
         h = builtins.head x;
         t = builtins.tail x;
-        off_comb = combination t;
-        on_comb = builtins.map (c: [ h ] ++ c) off_comb;
-      in off_comb ++ on_comb;
+        offComb = combination t;
+        onComb = builtins.map (c: [ h ] ++ c) offComb;
+      in offComb ++ onComb;
 
   featureCombination = attrs: sep:
     let
@@ -31,15 +31,15 @@ rec {
       value = builtins.getAttr name attrs;
     }) names;
 
-  snake_version = version:
+  snakeVersion = version:
     builtins.replaceStrings [ "." "-" ] [ "_" "_" ] version;
 
-  make_feature_string = features: sep:
+  makeFeatureString = features: sep:
     if features == "" then "" else "${sep}${builtins.replaceStrings ["_"] [sep] features}";
 
-  make_pkg_path = name: version: features:
-    "${name}_${snake_version version}${make_feature_string features "_"}";
+  makePkgPath = name: version: features:
+    "${name}_${snakeVersion version}${makeFeatureString features "_"}";
 
-  make_pkg_name = name: version: features:
-    "${name}-${version}${make_feature_string features "-"}";
+  makePkgName = name: version: features:
+    "${name}-${version}${makeFeatureString features "-"}";
 }

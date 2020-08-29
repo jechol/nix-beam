@@ -15,6 +15,9 @@ let
 
   targets = [
     {
+      buildOpts = buildOptsFromR22;
+      featureOpts = featureOptsFromR18;
+
       release = {
         version = "22.3";
         sha256 = "0srbyncgnr1kp0rrviq14ia3h795b3gk0iws5ishv6rphcq1rs27";
@@ -23,8 +26,6 @@ let
           substituteInPlace erts/configure.in --replace '-Wl,-no_weak_imports' ""
         '';
       };
-      buildOpts = buildOptsFromR22;
-      featureOpts = featureOptsFromR18;
     }
 
     {
@@ -121,22 +122,14 @@ let
         let
           features = name;
           featureFlags = value;
-          # fullBuildOpts = buildOpts // value;
           builder = callPackage ./generic-builder.nix buildOpts;
           mkDerivation = pkgs.makeOverridable builder;
-          # pkg_path = "erlang_${
-          #               builtins.replaceStrings [ "." ] [ "_" ] release.version
-          #             }${name}";
-          # pkg_name = "erlang-${release.version}${builtins.replaceStrings [ "_" ] [ "-" ] name}";
-          pkg_path = util.make_pkg_path "erlang" release.version features;
-          pkg_name = util.make_pkg_name "erlang" release.version features;
-          pkg = mkDerivation release;
-          pkg_with_feature = pkg.override featureFlags;
-          pkg_renamed = pkg_with_feature // {name = pkg_name;};
-          # pkg_drv = (mkDerivation release).override value;
+          pkgPath = util.makePkgPath "erlang" release.version features;
+          pkgName = util.makePkgName "erlang" release.version features;
+          pkg = ((mkDerivation release).override featureFlags) // {name = pkgName;};
         in {
-          name = pkg_path;
-          value = pkg_renamed;
+          name = pkgPath;
+          value = pkg;
         }) featureList;
     in variants) targets;
 
