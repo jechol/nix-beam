@@ -8,9 +8,9 @@ let
   };
 
   featureOptsFromR18 = {
-    _odbc = { odbcSupport = true; };
-    _javac = { javacSupport = true; };
-    _nox = { wxSupport = false; };
+    odbc = { odbcSupport = true; };
+    javac = { javacSupport = true; };
+    nox = { wxSupport = false; };
   };
 
   targets = [
@@ -44,7 +44,7 @@ let
 
     {
       buildOpts = { };
-      featureOpts = { _odbc = { odbcSupport = true; }; };
+      featureOpts = { odbc = { odbcSupport = true; }; };
 
       release = {
         baseName = "erlang";
@@ -115,19 +115,23 @@ let
 
   variantsPerTarget = map ({ release, buildOpts, featureOpts }:
     let
-      featureVariants = util.optionComb featureOpts;
+      featureVariants = util.featureCombination featureOpts "_";
       featureList = util.attrsToList featureVariants;
       variants = builtins.map ({ name, value }:
         let
+          features = name;
+          featureFlags = value;
           # fullBuildOpts = buildOpts // value;
           builder = callPackage ./generic-builder.nix buildOpts;
           mkDerivation = pkgs.makeOverridable builder;
-          pkg_path = "erlang_${
-                        builtins.replaceStrings [ "." ] [ "_" ] release.version
-                      }${name}";
-          pkg_name = "erlang-${release.version}${builtins.replaceStrings [ "_" ] [ "-" ] name}";
+          # pkg_path = "erlang_${
+          #               builtins.replaceStrings [ "." ] [ "_" ] release.version
+          #             }${name}";
+          # pkg_name = "erlang-${release.version}${builtins.replaceStrings [ "_" ] [ "-" ] name}";
+          pkg_path = util.make_pkg_path "erlang" release.version features;
+          pkg_name = util.make_pkg_name "erlang" release.version features;
           pkg = mkDerivation release;
-          pkg_with_feature = pkg.override value;
+          pkg_with_feature = pkg.override featureFlags;
           pkg_renamed = pkg_with_feature // {name = pkg_name;};
           # pkg_drv = (mkDerivation release).override value;
         in {
