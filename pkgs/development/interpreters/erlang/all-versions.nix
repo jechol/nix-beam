@@ -1,6 +1,8 @@
-{ pkgs, callPackage, wxGTK30, openssl_1_0_2, util ? import ../../../util.nix }:
+{ pkgs, callPackage, wxGTK30, openssl_1_0_2, lib }:
 
 let
+  util = callPackage ../../../util.nix { };
+
   buildOptsFromR22 = {
     wxGTK = wxGTK30;
     # Can be enabled since the bug has been fixed in https://github.com/erlang/otp/pull/2508
@@ -114,25 +116,40 @@ let
     }
   ];
 
-  variantsPerVersion = map ({ release, buildOpts, featureOpts }:
+  makeVariantsForVersion = { release, buildOpts, featureOpts }:
+    includeVersion:
     let
       featureVariants = util.featureCombination featureOpts "_";
       featureList = util.attrsToList featureVariants;
-      variants = builtins.map ({ name, value }:
+      variants = map ({ name, value }:
         let
           features = name;
           featureFlags = value;
           builder = callPackage ./generic-builder.nix buildOpts;
           mkDerivation = pkgs.makeOverridable builder;
-          pkgPath = util.makePkgPath "erlang" release.version features;
-          pkgName = util.makePkgName "erlang" release.version features;
-          pkg = ((mkDerivation release).override featureFlags) // {name = pkgName;};
+          pkgPath = if includeVersion then
+            util.makePkgPathWithVersion "erlang" release.version features
+          else
+            util.makePkgPath "erlang" features;
+
+          pkgName = if includeVersion then
+            util.makePkgNameWithVersion "erlang" release.version features
+          else
+            util.makePkgName "erlang" features;
+
+          pkg = ((mkDerivation release).override featureFlags) // {
+            name = pkgName;
+          };
         in {
           name = pkgPath;
           value = pkg;
         }) featureList;
-    in variants) versions;
+    in variants;
 
-  variants = builtins.concatLists variantsPerVersion;
+  versioned =
+    builtins.concatLists (map (v: makeVariantsForVersion v true) versions);
+  unversioned = makeVariantsForVersion (builtins.elemAt versions 0) false;
+
+  variants = unversioned ++ versioned;
 
 in (builtins.listToAttrs variants)

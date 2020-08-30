@@ -1,21 +1,33 @@
-{ pkgs, callPackage, wxGTK30, openssl_1_0_2 }:
+{ pkgs, callPackage, wxGTK30, openssl_1_0_2, lib }:
 
-rec {
+with lib; rec {
+  # lib = callPackage ../development/beam-modules/lib.nix { };
+  util = callPackage ../util.nix { };
+
+  interpreters2 = util.filterDerivations
+    (callPackage ../development/interpreters/erlang/all-versions.nix { });
+
+  # allErlangValues = builtins.filter pkgs.lib.attrsets.isDerivation
+  #   (builtins.attrValues allErlang);
+  # latestErlang = let
+
+  #   sorter = v1: v2: (builtins.compareVersions v1.version v2.version) == 1;
+  #   sorted = builtins.sort sorter ();
+  # in builtins.elemAt sorted 0;
+
+  # allBeamModuleValues = map (erlang:
+  #   let
+  #     beamModules = callPackage ../development/beam-modules/all-versions.nix {
+  #       inherit erlang;
+  #     };
+  #   in beamModules) allErlangValues;
+
+  # merged = builtins.foldl' { } allBeamModules;
+
   lib = callPackage ../development/beam-modules/lib.nix { };
 
   # Each
   interpreters = rec {
-
-    all_erlang = callPackage ../development/interpreters/erlang/all-versions.nix { };
-
-
-    latest_erlang = let
-      values = builtins.attrValues all_erlang;
-      drvValues = builtins.filter pkgs.lib.attrsets.isDerivation values;
-      sorter = v1: v2: (builtins.compareVersions v1.version v2.version) == 1;
-      sorted = builtins.sort sorter drvValues;
-    in
-      builtins.elemAt sorted 0;
 
     # R22 is the default version.
     erlang = erlangR22; # The main switch to change default Erlang version.
@@ -119,21 +131,10 @@ rec {
     inherit (packages.erlang) lfe lfe_1_2 lfe_1_3;
   };
 
-  # Helper function to generate package set with a specific Erlang version.
   packagesWith = erlang:
-    callPackage ../development/beam-modules { inherit erlang; };
+    callPackage ../development/beam-modules/all-versions.nix {
+      inherit erlang;
+    };
 
-  # Each field in this tuple represents all Beam packages in nixpkgs built with
-  # appropriate Erlang/OTP version.
-  packages = {
-    # Packages built with default Erlang version.
-    erlang = packagesWith interpreters.erlang;
-
-    erlangR23 = packagesWith interpreters.erlangR23;
-    erlangR22 = packagesWith interpreters.erlangR22;
-    erlangR21 = packagesWith interpreters.erlangR21;
-    erlangR20 = packagesWith interpreters.erlangR20;
-    erlangR19 = packagesWith interpreters.erlangR19;
-    erlangR18 = packagesWith interpreters.erlangR18;
-  };
-} 
+  packages = attrsets.mapAttrs (k: v: packagesWith v) interpreters2;
+}

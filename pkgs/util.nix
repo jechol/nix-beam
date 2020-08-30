@@ -1,4 +1,6 @@
-rec {
+{ stdenv, lib }:
+
+with lib; rec {
   combination = x:
     if x == [ ] then
       [ [ ] ]
@@ -7,7 +9,7 @@ rec {
         h = builtins.head x;
         t = builtins.tail x;
         offComb = combination t;
-        onComb = builtins.map (c: [ h ] ++ c) offComb;
+        onComb = map (c: [ h ] ++ c) offComb;
       in offComb ++ onComb;
 
   featureCombination = attrs: sep:
@@ -17,7 +19,7 @@ rec {
       mergeValueAttrs =
         (names: builtins.foldl' (s: name: s // attrs.${name}) { } names);
       combs_attrs = let
-        nameToList = builtins.map (names: {
+        nameToList = map (names: {
           name = (builtins.concatStringsSep sep names);
           value = mergeValueAttrs names;
         }) namesComb;
@@ -26,7 +28,7 @@ rec {
 
   attrsToList = attrs:
     let names = builtins.attrNames attrs;
-    in builtins.map (name: {
+    in map (name: {
       name = name;
       value = builtins.getAttr name attrs;
     }) names;
@@ -35,11 +37,21 @@ rec {
     builtins.replaceStrings [ "." "-" ] [ "_" "_" ] version;
 
   makeFeatureString = features: sep:
-    if features == "" then "" else "${sep}${builtins.replaceStrings ["_"] [sep] features}";
+    if features == "" then
+      ""
+    else
+      "${sep}${builtins.replaceStrings [ "_" ] [ sep ] features}";
 
-  makePkgPath = name: version: features:
+  makePkgPath = name: features: "${name}${makeFeatureString features "_"}";
+
+  makePkgPathWithVersion = name: version: features:
     "${name}_${snakeVersion version}${makeFeatureString features "_"}";
 
-  makePkgName = name: version: features:
+  makePkgName = name: features: "${name}${makeFeatureString features "-"}";
+
+  makePkgNameWithVersion = name: version: features:
     "${name}-${version}${makeFeatureString features "-"}";
+
+  filterDerivations = attrs:
+    attrsets.filterAttrs (k: v: attrsets.isDerivation v) attrs;
 }
