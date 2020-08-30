@@ -42,4 +42,4 @@ let
   }) ([ latest ] ++ versioned);
 
   result = (builtins.listToAttrs pairs);
-in result
+in pkgs.lib.attrsets.recurseIntoAttrs result

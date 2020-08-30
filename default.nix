@@ -13,7 +13,7 @@ let
     pkgs.callPackage pkgs/development/interpreters/erlang/all-versions.nix { };
   allElixir =
     pkgs.callPackage pkgs/development/interpreters/elixir/all-versions.nix { };
-in allErlang // rec {
+in rec {
   # The `lib`, `modules`, and `overlay` names are special
   lib = import ./lib { inherit pkgs; }; # functions
   modules = import ./modules; # NixOS modules
