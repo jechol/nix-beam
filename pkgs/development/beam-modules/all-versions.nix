@@ -37,7 +37,7 @@ let
 
       elixirs = callPackage ../interpreters/elixir/all-versions.nix {
         inherit rebar erlang;
-        inherit (lib) callElixir;
+        # inherit (lib) callElixir;
         debugInfo = true;
       };
 
