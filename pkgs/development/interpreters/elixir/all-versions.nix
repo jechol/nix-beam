@@ -38,7 +38,7 @@ let
 
   pairs = map (d: {
     name = util.snakeVersion d.name;
-    value = d;
+    value = d.overrideAttrs (old: { name = "${old.name}-${erlang.name}"; });
   }) ([ latest ] ++ versioned);
 
   result = (builtins.listToAttrs pairs);
