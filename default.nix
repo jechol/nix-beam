@@ -6,9 +6,14 @@
 # commands such as:
 #     nix-build -A mypackage
 
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? import <nixpkgs> { } }:
 
-rec {
+let
+  allErlang =
+    pkgs.callPackage pkgs/development/interpreters/erlang/all-versions.nix { };
+  allElixir =
+    pkgs.callPackage pkgs/development/interpreters/elixir/all-versions.nix { };
+in allErlang // rec {
   # The `lib`, `modules`, and `overlay` names are special
   lib = import ./lib { inherit pkgs; }; # functions
   modules = import ./modules; # NixOS modules
@@ -29,5 +34,5 @@ rec {
   # inherit (beam.packages.erlangR19) cuter lfe_1_2;
 
   # inherit (beam.packages.erlangR21) lfe lfe_1_3;
-} // (pkgs.callPackage pkgs/development/interpreters/erlang/all-versions.nix { })
+}
 

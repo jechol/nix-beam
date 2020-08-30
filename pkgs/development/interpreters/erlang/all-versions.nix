@@ -13,7 +13,7 @@ let
     nox = { wxSupport = false; };
   };
 
-  targets = [
+  versions = [
     {
       buildOpts = buildOptsFromR22;
       featureOpts = featureOptsFromR18;
@@ -114,7 +114,7 @@ let
     }
   ];
 
-  variantsPerTarget = map ({ release, buildOpts, featureOpts }:
+  variantsPerVersion = map ({ release, buildOpts, featureOpts }:
     let
       featureVariants = util.featureCombination featureOpts "_";
       featureList = util.attrsToList featureVariants;
@@ -131,8 +131,8 @@ let
           name = pkgPath;
           value = pkg;
         }) featureList;
-    in variants) targets;
+    in variants) versions;
 
-  variants = builtins.concatLists variantsPerTarget;
+  variants = builtins.concatLists variantsPerVersion;
 
 in (builtins.listToAttrs variants)
