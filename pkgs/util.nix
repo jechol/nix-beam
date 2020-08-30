@@ -21,7 +21,7 @@ rec {
           name = (builtins.concatStringsSep sep names);
           value = mergeValueAttrs names;
         }) namesComb;
-      in builtins.listToAttrs (builtins.trace nameToList nameToList);
+      in builtins.listToAttrs nameToList;
     in combs_attrs;
 
   attrsToList = attrs:
