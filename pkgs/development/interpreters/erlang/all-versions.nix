@@ -148,8 +148,8 @@ let
 
   versioned =
     builtins.concatLists (map (v: makeVariantsForVersion v true) versions);
-  unversioned = makeVariantsForVersion (builtins.elemAt versions 0) false;
+  latest = makeVariantsForVersion (builtins.elemAt versions 0) false;
 
-  variants = unversioned ++ versioned;
+  variants = latest ++ versioned;
 
 in (builtins.listToAttrs variants)

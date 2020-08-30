@@ -1,9 +1,8 @@
-{ stdenv, pkgs, rebar, erlang, debugInfo }:
+{ stdenv, pkgs, rebar, erlang, debugInfo, util }:
 
 let
-  callElixir = drv: args:
-    let builder = pkgs.callPackage ./generic-builder.nix args;
-    in pkgs.callPackage drv { mkDerivation = pkgs.makeOverridable builder; };
+  builder =
+    pkgs.callPackage ./generic-builder.nix { inherit rebar erlang debugInfo; };
 
   versions = [
     {
@@ -32,12 +31,15 @@ let
       minimumOTPVersion = "19";
     }
   ];
-in callElixir ({ mkDerivation }:
-  mkDerivation {
-    version = "1.10.4";
-    sha256 = "16j4rmm3ix088fvxhvyjqf1hnfg7wiwa87gml3b2mrwirdycbinv";
-    minimumOTPVersion = "21";
-  }) {
-    inherit rebar erlang debugInfo;
-  }
-  # in callElixir ./1.10.nix { inherit rebar erlang debugInfo; }
+
+  versioned = (map builder versions);
+  latest = (builder (builtins.elemAt versions 0)).overrideAttrs
+    (_: { name = "elixir"; });
+
+  pairs = map (d: {
+    name = util.snakeVersion d.name;
+    value = d;
+  }) ([ latest ] ++ versioned);
+
+  result = (builtins.listToAttrs pairs);
+in result

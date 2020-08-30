@@ -1,4 +1,4 @@
-{ callPackage, stdenv, pkgs, erlang }:
+{ callPackage, stdenv, pkgs, erlang, util }:
 
 let
   inherit (stdenv.lib) makeExtensible;
@@ -36,8 +36,7 @@ let
       buildMix = callPackage ./build-mix.nix { };
 
       elixirs = callPackage ../interpreters/elixir/all-versions.nix {
-        inherit rebar erlang;
-        # inherit (lib) callElixir;
+        inherit rebar erlang util;
         debugInfo = true;
       };
 

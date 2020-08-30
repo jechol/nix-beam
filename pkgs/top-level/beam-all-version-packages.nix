@@ -28,7 +28,7 @@ with lib; rec {
 
   packagesWith = erlang:
     callPackage ../development/beam-modules/all-versions.nix {
-      inherit erlang;
+      inherit erlang util;
     };
 
   packages = attrsets.mapAttrs (k: v: packagesWith v) interpreters2;
