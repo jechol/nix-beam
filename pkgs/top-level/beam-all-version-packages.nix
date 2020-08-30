@@ -1,10 +1,21 @@
-{ callPackage, wxGTK30, openssl_1_0_2 }:
+{ pkgs, callPackage, wxGTK30, openssl_1_0_2 }:
 
 rec {
   lib = callPackage ../development/beam-modules/lib.nix { };
 
   # Each
   interpreters = rec {
+
+    all_erlang = callPackage ../development/interpreters/erlang/all-versions.nix { };
+
+
+    latest_erlang = let
+      values = builtins.attrValues all_erlang;
+      drvValues = builtins.filter pkgs.lib.attrsets.isDerivation values;
+      sorter = v1: v2: (builtins.compareVersions v1.version v2.version) == 1;
+      sorted = builtins.sort sorter drvValues;
+    in
+      builtins.elemAt sorted 0;
 
     # R22 is the default version.
     erlang = erlangR22; # The main switch to change default Erlang version.

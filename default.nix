@@ -19,6 +19,8 @@ in allErlang // rec {
   modules = import ./modules; # NixOS modules
   overlays = import ./overlays; # nixpkgs overlays
 
+  beam = pkgs.callPackage ./pkgs/top-level/beam-all-version-packages.nix { };
+
   # beam = pkgs.callPackage ./pkgs/top-level/beam-packages.nix { };
 
   # inherit (beam.interpreters)
