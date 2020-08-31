@@ -1,19 +1,16 @@
 { callPackage, stdenv, pkgs, erlang, util }:
 
 let
-  inherit (stdenv.lib) makeExtensible;
-
   lib = pkgs.callPackage ./lib.nix { };
-
-  # FIXME: add support for overrideScope
-  callPackageWithScope = scope: drv: args:
-    stdenv.lib.callPackageWith scope drv args;
-  mkScope = scope: pkgs // scope;
 
   packages = self:
     let
-      defaultScope = mkScope self;
-      callPackage = drv: args: callPackageWithScope defaultScope drv args;
+      callPackage = stdenv.lib.callPackageWith (pkgs // self);
+      # callPackage = drv: args: (specifyErlang (callPackage drv args));
+      # # callPackage = callPackage;
+      # specifyErlang = drv:
+      #   drv.overrideAttrs
+      #   (old: { name = "${old.pname}-${old.version}-${erlang.name}"; });
     in rec {
       inherit callPackage erlang;
       beamPackages = self;
@@ -88,4 +85,4 @@ let
       # An example of Erlang/C++ package.
       cuter = callPackage ../tools/erlang/cuter { };
     };
-in makeExtensible packages
+in stdenv.lib.makeExtensible packages
