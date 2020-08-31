@@ -143,7 +143,7 @@ let
             "latest-${features}";
 
           pkg = ((mkDerivation release).override featureFlags).overrideAttrs
-            (o: { version = versionWithFeatures; });
+            (o: { name = pkgName; });
         in {
           name = pkgPath;
           value = pkg;

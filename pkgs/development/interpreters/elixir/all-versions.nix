@@ -1,4 +1,4 @@
-{ stdenv, pkgs, rebar, erlang, debugInfo, util }:
+{ stdenv, pkgs, rebar, erlang, debugInfo, annotateErlangInVersion, util }:
 
 let
   builder =
@@ -38,7 +38,7 @@ let
 
   pairs = map (d: {
     name = util.snakeVersion d.name;
-    value = d.overrideAttrs (old: { name = "${old.name}-${erlang.name}"; });
+    value = annotateErlangInVersion d;
   }) ([ latest ] ++ versioned);
 
   result = (builtins.listToAttrs pairs);
