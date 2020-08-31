@@ -5,84 +5,63 @@ let
 
   packages = self:
     let
-      callPackage = stdenv.lib.callPackageWith (pkgs // self);
+      callPackageWithBeam = stdenv.lib.callPackageWith (pkgs // self);
+      # callPackageWithBeam = drv: args:
+      #   (callPackageWithBeam drv args).overrideAttrs
+      #   (o: { name = "${o.pname}-${o.version}-${erlang.name}"; });
       # callPackage = drv: args: (specifyErlang (callPackage drv args));
       # # callPackage = callPackage;
-      # specifyErlang = drv:
-      #   drv.overrideAttrs
-      #   (old: { name = "${old.pname}-${old.version}-${erlang.name}"; });
+      specifyErlang = drv:
+        drv.overrideDerivation (o: { name = "${o.name}-${erlang.name}"; });
+      # (old: if old ? name then 
+      # else { name = "${old.pname}-${old.version}-${erlang.name}"; });
+
+      callAndSpecifyErlang = drv: args:
+        specifyErlang (callPackageWithBeam drv args);
     in rec {
-      inherit callPackage erlang;
-      beamPackages = self;
+      # inherit callPackage erlang;
 
-      rebar = callPackage ../tools/build-managers/rebar { };
-      rebar3 = callPackage ../tools/build-managers/rebar3 { };
+      # beamPackages = self;
 
+      # Functions
+      fetchHex = callPackageWithBeam ./fetch-hex.nix { };
+      fetchRebar3Deps = callPackageWithBeam ./fetch-rebar-deps.nix { };
+      rebar3Relx = callPackageWithBeam ./rebar3-release.nix { };
+
+      buildRebar3 = callPackageWithBeam ./build-rebar3.nix { };
+      buildHex = callPackageWithBeam ./build-hex.nix { };
+      buildErlangMk = callPackageWithBeam ./build-erlang-mk.nix { };
+      buildMix = callPackageWithBeam ./build-mix.nix { };
+
+      # Derivations
+      rebar = callAndSpecifyErlang ../tools/build-managers/rebar { };
+      rebar3 = callAndSpecifyErlang ../tools/build-managers/rebar3 { };
       # rebar3 port compiler plugin is required by buildRebar3
-      pc_1_6_0 = callPackage ./pc { };
-      pc = pc_1_6_0;
+      pc = callAndSpecifyErlang ./pc { };
 
-      fetchHex = callPackage ./fetch-hex.nix { };
-
-      fetchRebar3Deps = callPackage ./fetch-rebar-deps.nix { };
-      rebar3Relx = callPackage ./rebar3-release.nix { };
-
-      buildRebar3 = callPackage ./build-rebar3.nix { };
-      buildHex = callPackage ./build-hex.nix { };
-      buildErlangMk = callPackage ./build-erlang-mk.nix { };
-      buildMix = callPackage ./build-mix.nix { };
-
-      elixirs = callPackage ../interpreters/elixir/all-versions.nix {
+      elixirs = callAndSpecifyErlang ../interpreters/elixir/all-versions.nix {
         inherit rebar erlang util;
         debugInfo = true;
       };
 
-      # # BEAM-based languages.
-      # elixir = elixir_1_10;
-
-      # elixir_1_10 = lib.callElixir ../interpreters/elixir/1.10.nix {
-      #   inherit rebar erlang;
-      #   debugInfo = true;
-      # };
-
-      # elixir_1_9 = lib.callElixir ../interpreters/elixir/1.9.nix {
-      #   inherit rebar erlang;
-      #   debugInfo = true;
-      # };
-
-      # elixir_1_8 = lib.callElixir ../interpreters/elixir/1.8.nix {
-      #   inherit rebar erlang;
-      #   debugInfo = true;
-      # };
-
-      # elixir_1_7 = lib.callElixir ../interpreters/elixir/1.7.nix {
-      #   inherit rebar erlang;
-      #   debugInfo = true;
-      # };
-
-      # elixir_1_6 = lib.callElixir ../interpreters/elixir/1.6.nix {
-      #   inherit rebar erlang;
-      #   debugInfo = true;
-      # };
-
       # Remove old versions of elixir, when the supports fades out:
       # https://hexdocs.pm/elixir/compatibility-and-deprecations.html
 
-      lfe = lfe_1_3;
-      lfe_1_2 = lib.callLFE ../interpreters/lfe/1.2.nix {
-        inherit erlang buildRebar3 buildHex;
-      };
-      lfe_1_3 = lib.callLFE ../interpreters/lfe/1.3.nix {
-        inherit erlang buildRebar3 buildHex;
-      };
+      # lfe = lfe_1_3;
+      # lfe_1_2 = lib.callLFE ../interpreters/lfe/1.2.nix {
+      #   inherit erlang buildRebar3 buildHex;
+      # };
+      # lfe_1_3 = lib.callLFE ../interpreters/lfe/1.3.nix {
+      #   inherit erlang buildRebar3 buildHex;
+      # };
 
       # Non hex packages. Examples how to build Rebar/Mix packages with and
       # without helper functions buildRebar3 and buildMix.
-      hex = callPackage ./hex { };
-      webdriver = callPackage ./webdriver { };
-      relxExe = callPackage ../tools/erlang/relx-exe { };
+      hex = callPackageWithBeam ./hex { };
+      webdriver = callPackageWithBeam ./webdriver { };
+      relxExe = callPackageWithBeam ../tools/erlang/relx-exe { };
 
       # An example of Erlang/C++ package.
-      cuter = callPackage ../tools/erlang/cuter { };
+      cuter = callPackageWithBeam ../tools/erlang/cuter { };
     };
 in stdenv.lib.makeExtensible packages

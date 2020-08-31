@@ -34,7 +34,7 @@ let
 
   versioned = (map builder versions);
   latest = (builder (builtins.elemAt versions 0)).overrideAttrs
-    (_: { name = "elixir"; });
+    (_: { version = "latest"; });
 
   pairs = map (d: {
     name = util.snakeVersion d.name;

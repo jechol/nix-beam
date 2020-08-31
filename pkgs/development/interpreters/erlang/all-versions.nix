@@ -130,16 +130,20 @@ let
           pkgPath = if includeVersion then
             util.makePkgPathWithVersion "erlang" release.version features
           else
-            util.makePkgPath "erlang" features;
+            util.makePkgPathWithVersion "erlang" "latest" features;
 
           pkgName = if includeVersion then
             util.makePkgNameWithVersion "erlang" release.version features
           else
-            util.makePkgName "erlang" features;
+            util.makePkgNameWithVersion "erlang" "latest" features;
 
-          pkg = ((mkDerivation release).override featureFlags) // {
-            name = pkgName;
-          };
+          versionWithFeatures = if includeVersion then
+            "${release.version}-${features}"
+          else
+            "latest-${features}";
+
+          pkg = ((mkDerivation release).override featureFlags).overrideAttrs
+            (o: { version = versionWithFeatures; });
         in {
           name = pkgPath;
           value = pkg;
