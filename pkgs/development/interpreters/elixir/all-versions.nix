@@ -32,14 +32,10 @@ let
     }
   ];
 
-  versioned = (map builder versions);
-  latest = (builder (builtins.elemAt versions 0)).overrideAttrs
-    (_: { version = "latest"; });
-
   pairs = map (d: {
     name = util.snakeVersion d.name;
     value = annotateErlangInVersion d;
-  }) ([ latest ] ++ versioned);
+  }) (map builder versions);
 
   result = (builtins.listToAttrs pairs);
 in pkgs.lib.attrsets.recurseIntoAttrs result
