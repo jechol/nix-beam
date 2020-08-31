@@ -1,37 +1,29 @@
-{ pkgs, callPackage, wxGTK30, openssl_1_0_2, lib, util }:
+{ pkgs, fetchpatch, callPackage, wxGTK30, openssl_1_0_2, lib, util }:
 
 let
-  buildOptsFromR22 = {
+  buildOptsR22_23 = {
     wxGTK = wxGTK30;
     # Can be enabled since the bug has been fixed in https://github.com/erlang/otp/pull/2508
     parallelBuild = true;
   };
+  buildOptsR20_21 = { wxGTK = wxGTK30; };
+  buildOptsR18_19 = {
+    wxGTK = wxGTK30;
+    openssl = openssl_1_0_2;
+  };
+  buildOptsR16 = { };
 
-  featureOptsFromR18 = {
+  featureOptsR18_23 = {
     odbc = { odbcSupport = true; };
     javac = { javacSupport = true; };
     nox = { wxSupport = false; };
   };
+  featureOptsR16 = { odbc = { odbcSupport = true; }; };
 
   versions = [
     {
-      buildOpts = buildOptsFromR22;
-      featureOpts = featureOptsFromR18;
-
-      release = {
-        version = "22.3";
-        sha256 = "0srbyncgnr1kp0rrviq14ia3h795b3gk0iws5ishv6rphcq1rs27";
-        prePatch = ''
-          substituteInPlace make/configure.in --replace '`sw_vers -productVersion`' "''${MACOSX_DEPLOYMENT_TARGET:-10.12}"
-          substituteInPlace erts/configure.in --replace '-Wl,-no_weak_imports' ""
-        '';
-      };
-    }
-
-    {
-      buildOpts = buildOptsFromR22;
-      featureOpts = featureOptsFromR18;
-
+      buildOpts = buildOptsR22_23;
+      featureOpts = featureOptsR18_23;
       release = {
         version = "23.0.3";
         sha256 = "133aw1ffkxdf38na3smmvn5qwwlalh4r4a51793h1wkhdzkyl6mv";
@@ -42,11 +34,98 @@ let
         '';
       };
     }
-
     {
-      buildOpts = { };
-      featureOpts = { odbc = { odbcSupport = true; }; };
+      buildOpts = buildOptsR22_23;
+      featureOpts = featureOptsR18_23;
+      release = {
+        version = "22.3";
+        sha256 = "0srbyncgnr1kp0rrviq14ia3h795b3gk0iws5ishv6rphcq1rs27";
+        prePatch = ''
+          substituteInPlace make/configure.in --replace '`sw_vers -productVersion`' "''${MACOSX_DEPLOYMENT_TARGET:-10.12}"
+          substituteInPlace erts/configure.in --replace '-Wl,-no_weak_imports' ""
+        '';
+      };
+    }
+    {
+      buildOpts = buildOptsR20_21;
+      featureOpts = featureOptsR18_23;
+      release = {
+        version = "21.3.8.3";
+        sha256 = "1szybirrcpqsl2nmlmpbkxjqnm6i7l7bma87m5cpwi0kpvlxwmcw";
 
+        prePatch = ''
+          substituteInPlace configure.in --replace '`sw_vers -productVersion`' "''${MACOSX_DEPLOYMENT_TARGET:-10.12}"
+        '';
+      };
+    }
+    {
+      buildOpts = buildOptsR20_21;
+      featureOpts = featureOptsR18_23;
+      release = {
+        version = "20.3.8.9";
+        sha256 = "0v2iiyzss8hiih98wvj0gi2qzdmmhh7bvc9p025wlfm4k7r1109a";
+
+        prePatch = ''
+          substituteInPlace configure.in --replace '`sw_vers -productVersion`' "''${MACOSX_DEPLOYMENT_TARGET:-10.12}"
+        '';
+      };
+    }
+    {
+      buildOpts = buildOptsR18_19;
+      featureOpts = featureOptsR18_23;
+      release = {
+        version = "19.3.6.11";
+        sha256 = "0b02iv8dly1vkc2xnqqi030sdj34h4gji2h4qgilllajr1f868vm";
+
+        patches = [
+          # macOS 10.13 crypto fix from OTP-20.1.2
+          (fetchpatch {
+            name = "darwin-crypto.patch";
+            url =
+              "https://github.com/erlang/otp/commit/882c90f72ba4e298aa5a7796661c28053c540a96.patch";
+            sha256 = "1gggzpm8ssamz6975z7px0g8qq5i4jqw81j846ikg49c5cxvi0hi";
+          })
+        ];
+
+        prePatch = ''
+          substituteInPlace configure.in --replace '`sw_vers -productVersion`' "''${MACOSX_DEPLOYMENT_TARGET:-10.12}"
+        '';
+      };
+    }
+    {
+      buildOpts = buildOptsR18_19;
+      featureOpts = featureOptsR18_23;
+      release = {
+        version = "18.3.4.8";
+        sha256 = "16c0h25hh5yvkv436ks5jbd7qmxzb6ndvk64mr404347a20iib0g";
+
+        patches = [
+          (fetchpatch {
+            url =
+              "https://github.com/erlang/otp/commit/98b8650d22e94a5ff839170833f691294f6276d0.patch";
+            sha256 = "0zjs7as83prgq4d5gaw2cmnajnsprdk8cjl5kklknx0pc2b3hfg5";
+          })
+          (fetchpatch {
+            url =
+              "https://github.com/erlang/otp/commit/9f9841eb7327c9fe73e84e197fd2965a97b639cf.patch";
+            sha256 = "00fx5wc88ki3z71z5q4xzi9h3whhjw1zblpn09w995ygn07m9qhm";
+          })
+          (fetchpatch {
+            url =
+              "https://github.com/erlang/otp/commit/2f1a37f1011ff9d129bc35a6efa0ab937a2aa0e9.patch";
+            sha256 = "0xfa6hzxh9d7qllkyidcgh57xrrx11w65y7s1hyg52alm06l6b9n";
+          })
+          (fetchpatch {
+            url =
+              "https://github.com/erlang/otp/commit/de8fe86f67591dd992bae33f7451523dab36e5bd.patch";
+            sha256 = "1cj9fjhdng6yllajjm3gkk04ag9bwyb3n70hrb5nk6c292v8a45c";
+          })
+        ];
+      };
+    }
+    {
+      buildOpts = buildOptsR16;
+      featureOpts = featureOptsR16;
       release = {
         baseName = "erlang";
         version = "16B02.basho10";
