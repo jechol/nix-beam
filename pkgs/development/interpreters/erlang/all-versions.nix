@@ -1,8 +1,6 @@
-{ pkgs, callPackage, wxGTK30, openssl_1_0_2, lib }:
+{ pkgs, callPackage, wxGTK30, openssl_1_0_2, lib, util }:
 
 let
-  util = callPackage ../../../util.nix { };
-
   buildOptsFromR22 = {
     wxGTK = wxGTK30;
     # Can be enabled since the bug has been fixed in https://github.com/erlang/otp/pull/2508

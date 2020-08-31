@@ -1,10 +1,11 @@
-{ pkgs, callPackage, wxGTK30, openssl_1_0_2, lib }:
+{ pkgs, callPackage, wxGTK30, openssl_1_0_2, lib, util }:
 
 with lib;
 attrsets.recurseIntoAttrs rec {
-  util = callPackage ../util.nix { };
   erlangs = util.filterDerivations
-    (callPackage ../development/interpreters/erlang/all-versions.nix { });
+    (callPackage ../development/interpreters/erlang/all-versions.nix {
+      inherit util;
+    });
   packages = attrsets.recurseIntoAttrs (attrsets.mapAttrs (_: erlang:
     attrsets.recurseIntoAttrs
     (callPackage ../development/beam-modules/all-versions.nix {
