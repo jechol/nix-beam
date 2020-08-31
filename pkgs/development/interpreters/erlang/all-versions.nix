@@ -117,7 +117,6 @@ let
   ];
 
   makeVariantsForVersion = { release, buildOpts, featureOpts }:
-    includeVersion:
     let
       featureVariants = util.featureCombination featureOpts "_";
       featureList = util.attrsToList featureVariants;
@@ -127,20 +126,8 @@ let
           featureFlags = value;
           builder = callPackage ./generic-builder.nix buildOpts;
           mkDerivation = pkgs.makeOverridable builder;
-          pkgPath = if includeVersion then
-            util.makePkgPathWithVersion "erlang" release.version features
-          else
-            util.makePkgPathWithVersion "erlang" "latest" features;
-
-          pkgName = if includeVersion then
-            util.makePkgNameWithVersion "erlang" release.version features
-          else
-            util.makePkgNameWithVersion "erlang" "latest" features;
-
-          versionWithFeatures = if includeVersion then
-            "${release.version}-${features}"
-          else
-            "latest-${features}";
+          pkgPath = util.makePkgPath "erlang" release.version features;
+          pkgName = util.makePkgName "erlang" release.version features;
 
           pkg = ((mkDerivation release).override featureFlags).overrideAttrs
             (o: { name = pkgName; });
@@ -150,10 +137,6 @@ let
         }) featureList;
     in variants;
 
-  versioned =
-    builtins.concatLists (map (v: makeVariantsForVersion v true) versions);
-  latest = makeVariantsForVersion (builtins.elemAt versions 0) false;
-
-  variants = latest ++ versioned;
+  variants = builtins.concatLists (map makeVariantsForVersion versions);
 
 in (builtins.listToAttrs variants)
