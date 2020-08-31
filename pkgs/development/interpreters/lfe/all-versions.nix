@@ -1,5 +1,5 @@
 { fetchpatch, stdenv, pkgs, rebar, erlang, buildRebar3, buildHex
-, annotateErlangInVersion, util }:
+, annotateErlangInVersion, lib, util }:
 
 let
   builder = pkgs.callPackage ./generic-builder.nix {
@@ -57,7 +57,7 @@ let
   supportedVersions = builtins.filter ({ maximumOTPVersion, ... }:
     let
       erlangMajorVerison =
-        builtins.head (stdenv.lib.strings.splitString "." erlang.version);
+        builtins.head (lib.strings.splitString "." erlang.version);
     in ((builtins.compareVersions erlangMajorVerison maximumOTPVersion) <= 0))
     versions;
 

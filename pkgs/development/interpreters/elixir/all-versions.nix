@@ -4,6 +4,8 @@ let
   builder =
     pkgs.callPackage ./generic-builder.nix { inherit rebar erlang debugInfo; };
 
+  # Remove old versions of elixir, when the supports fades out:
+  # https://hexdocs.pm/elixir/compatibility-and-deprecations.html
   versions = [
     {
       version = "1.10.4";

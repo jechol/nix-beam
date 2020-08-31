@@ -1,11 +1,9 @@
-{ callPackage, stdenv, pkgs, erlang, util }:
+{ callPackage, stdenv, pkgs, erlang, lib, util }:
 
 let
-  lib = pkgs.callPackage ./lib.nix { };
-
   packages = self:
     let
-      callPackageWithSelf = stdenv.lib.callPackageWith (pkgs // self);
+      callPackageWithSelf = lib.callPackageWith (pkgs // self);
       annotateErlangInVersion = drv:
         drv.overrideAttrs (o:
           let drvName = if o ? name then o.name else "${o.pname}-${o.version}";
@@ -41,17 +39,6 @@ let
         inherit erlang buildRebar3 buildHex;
       };
 
-      # Remove old versions of elixir, when the supports fades out:
-      # https://hexdocs.pm/elixir/compatibility-and-deprecations.html
-
-      # lfe = lfe_1_3;
-      # lfe_1_2 = lib.callLFE ../interpreters/lfe/1.2.nix {
-      #   inherit erlang buildRebar3 buildHex;
-      # };
-      # lfe_1_3 = lib.callLFE ../interpreters/lfe/1.3.nix {
-      #   inherit erlang buildRebar3 buildHex;
-      # };
-
       # Non hex packages. Examples how to build Rebar/Mix packages with and
       # without helper functions buildRebar3 and buildMix.
       hex = callAndAnnotate ./hex { };
@@ -63,4 +50,4 @@ let
       # An example of Erlang/C++ package.
       cuter = callAndAnnotate ../tools/erlang/cuter { };
     };
-in stdenv.lib.makeExtensible packages
+in lib.makeExtensible packages
