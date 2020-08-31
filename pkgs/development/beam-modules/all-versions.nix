@@ -31,8 +31,14 @@ let
       pc = callAndAnnotate ./pc { };
 
       elixirs = callPackageWithSelf ../interpreters/elixir/all-versions.nix {
-        inherit rebar erlang util annotateErlangInVersion;
+        inherit util annotateErlangInVersion;
+        inherit rebar erlang;
         debugInfo = true;
+      };
+
+      lfes = callPackageWithSelf ../interpreters/lfe/all-versions.nix {
+        inherit util annotateErlangInVersion;
+        inherit erlang buildRebar3 buildHex;
       };
 
       # Remove old versions of elixir, when the supports fades out:
