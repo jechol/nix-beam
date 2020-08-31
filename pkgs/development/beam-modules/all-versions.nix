@@ -6,23 +6,14 @@ let
   packages = self:
     let
       callPackageWithSelf = stdenv.lib.callPackageWith (pkgs // self);
-      # callPackageWithSelf = drv: args:
-      #   (callPackageWithSelf drv args).overrideAttrs
-      #   (o: { name = "${o.pname}-${o.version}-${erlang.name}"; });
-      # callPackage = drv: args: (annotateErlangInVersion (callPackage drv args));
-      # # callPackage = callPackage;
       annotateErlangInVersion = drv:
-        drv.overrideAttrs (o: { name = "${o.name}-${erlang.name}"; });
-      # (old: if old ? name then 
-      # else { name = "${old.pname}-${old.version}-${erlang.name}"; });
+        drv.overrideAttrs (o:
+          let drvName = if o ? name then o.name else "${o.pname}-${o.version}";
+          in { name = "${drvName}_${erlang.name}"; });
 
       callAndAnnotate = drv: args:
         annotateErlangInVersion (callPackageWithSelf drv args);
     in rec {
-      # inherit callPackage erlang;
-
-      # beamPackages = self;
-
       # Functions
       fetchHex = callPackageWithSelf ./fetch-hex.nix { };
       fetchRebar3Deps = callPackageWithSelf ./fetch-rebar-deps.nix { };
@@ -39,10 +30,10 @@ let
       # rebar3 port compiler plugin is required by buildRebar3
       pc = callAndAnnotate ./pc { };
 
-      # elixirs = callPackageWithSelf ../interpreters/elixir/all-versions.nix {
-      #   inherit rebar erlang util annotateErlangInVersion;
-      #   debugInfo = true;
-      # };
+      elixirs = callPackageWithSelf ../interpreters/elixir/all-versions.nix {
+        inherit rebar erlang util annotateErlangInVersion;
+        debugInfo = true;
+      };
 
       # Remove old versions of elixir, when the supports fades out:
       # https://hexdocs.pm/elixir/compatibility-and-deprecations.html
@@ -58,10 +49,12 @@ let
       # Non hex packages. Examples how to build Rebar/Mix packages with and
       # without helper functions buildRebar3 and buildMix.
       hex = callAndAnnotate ./hex { };
-      # webdriver = callAndAnnotate ./webdriver { };
-      # relxExe = callAndAnnotate ../tools/erlang/relx-exe { };
+      webdriver = annotateErlangInVersion
+        ((callPackageWithSelf ./webdriver { }).overrideAttrs
+          (o: { name = "${o.name}-${o.version}"; }));
+      relxExe = callAndAnnotate ../tools/erlang/relx-exe { };
 
-      # # An example of Erlang/C++ package.
-      # cuter = callAndAnnotate ../tools/erlang/cuter { };
+      # An example of Erlang/C++ package.
+      cuter = callAndAnnotate ../tools/erlang/cuter { };
     };
 in stdenv.lib.makeExtensible packages
