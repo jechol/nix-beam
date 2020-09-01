@@ -1,5 +1,5 @@
 { lib, beamLib, erlang, buildRebar3, buildHex, annotateErlangInVersion, util
-, mainOnly ? false }:
+, mainOnly }:
 
 let
   releases = [

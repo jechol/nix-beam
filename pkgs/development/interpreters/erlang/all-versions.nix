@@ -1,5 +1,4 @@
-{ pkgs, fetchpatch, callPackage, wxGTK30, openssl_1_0_2, lib, util
-, mainOnly ? false }:
+{ pkgs, fetchpatch, callPackage, wxGTK30, openssl_1_0_2, lib, util, mainOnly }:
 
 let
   beamLib = callPackage ../../beam-modules/lib.nix { };

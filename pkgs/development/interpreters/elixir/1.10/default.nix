@@ -1,4 +1,4 @@
-{ deriveElixirs, mainOnly ? false }:
+{ deriveElixirs, mainOnly }:
 
 let
   releases =

@@ -1,4 +1,4 @@
-{ callPackage, stdenv, pkgs, erlang, lib, util, mainOnly ? false }:
+{ callPackage, stdenv, pkgs, erlang, lib, util, mainOnly }:
 
 with lib.attrsets;
 let

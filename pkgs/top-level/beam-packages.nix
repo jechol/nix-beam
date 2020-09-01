@@ -5,6 +5,7 @@ with attrsets;
 let
   erlangs = (callPackage ../development/interpreters/erlang/all-versions.nix {
     inherit util;
+    mainOnly = false;
   });
 
   main_erlangs = recurseIntoAttrs (erlangs.override { mainOnly = true; });
@@ -12,11 +13,13 @@ let
   packages = (mapAttrs (_: erlang:
     recurseIntoAttrs (callPackage ../development/beam-modules/all-versions.nix {
       inherit erlang util;
+      mainOnly = false;
     })) (util.filterDerivations erlangs));
 
   main_packages = recurseIntoAttrs (mapAttrs (_: erlang:
     recurseIntoAttrs (callPackage ../development/beam-modules/all-versions.nix {
       inherit erlang util;
+      mainOnly = true;
     })) (util.filterDerivations main_erlangs));
 
 in recurseIntoAttrs {

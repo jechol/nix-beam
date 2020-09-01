@@ -1,5 +1,5 @@
-{ callPackage, rebar, erlang, debugInfo, annotateErlangInVersion, util
-, mainOnly ? false }:
+{ callPackage, rebar, erlang, debugInfo, annotateErlangInVersion, util, mainOnly
+}:
 
 let
   beamLib = callPackage ../../beam-modules/lib.nix { };

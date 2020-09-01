@@ -1,5 +1,5 @@
 { lib, openssl_1_0_2, wxGTK30, beamLib, util, deriveErlangFeatureVariants
-, mainOnly ? false }:
+, mainOnly }:
 
 let
   releases = if mainOnly then [ ./R22.0.nix ] else [ ./R22.0.nix ./R22.3.nix ];
