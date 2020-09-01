@@ -21,16 +21,16 @@ let
       basePkg = beamLib.callErlang release buildOpts;
       featureStringToFlags = util.featureCombination featureOpts "_";
     in lib.attrsets.mapAttrs' (overrideFeature basePkg) featureStringToFlags;
+
+  r23 = callPackage ./R23 {
+    inherit beamLib util mainOnly deriveErlangFeatureVariants;
+  };
 in rec {
   # let
   # releases = [ (callPackage ./R23/default.nix { inherit beamLib util; }) ];
 
   # releaseAttrs = builtins.foldl' (acc: release: acc // release) { } releases;
 
-  r23 = callPackage ./R23 {
-    inherit beamLib util mainOnly deriveErlangFeatureVariants;
-  };
-
   # in releaseAttrs
 
-}
+} // r23

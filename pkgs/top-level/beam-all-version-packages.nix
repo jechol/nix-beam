@@ -6,9 +6,9 @@ let
     inherit util;
   });
 in attrsets.recurseIntoAttrs rec {
-  all = { inherit erlangs; };
+  all = { } // erlangs;
 
-  main = { erlangs = erlangs.override { mainOnly = true; }; };
+  main = { } // erlangs.override { mainOnly = true; };
   # packages = attrsets.recurseIntoAttrs (attrsets.mapAttrs (_: erlang:
   #   attrsets.recurseIntoAttrs
   #   (callPackage ../development/beam-modules/all-versions.nix {
