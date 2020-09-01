@@ -1,6 +1,9 @@
 { callPackage, stdenv, pkgs, erlang, lib, util, mainOnly ? false }:
 
+with lib.attrsets;
 let
+  beamLib = callPackage ./lib.nix { };
+
   packages = self:
     let
       callPackageWithSelf = lib.callPackageWith (pkgs // self);
@@ -28,16 +31,18 @@ let
       # rebar3 port compiler plugin is required by buildRebar3
       pc = callAndAnnotate ./pc { };
 
-      elixirs = callPackageWithSelf ../interpreters/elixir/all-versions.nix {
-        inherit util annotateErlangInVersion mainOnly;
-        inherit rebar erlang;
-        debugInfo = true;
-      };
+      elixirs = recurseIntoAttrs
+        (callPackageWithSelf ../interpreters/elixir/all-versions.nix {
+          inherit util annotateErlangInVersion mainOnly;
+          inherit rebar erlang;
+          debugInfo = true;
+        });
 
-      lfes = callPackageWithSelf ../interpreters/lfe/all-versions.nix {
-        inherit util annotateErlangInVersion mainOnly;
-        inherit erlang buildRebar3 buildHex;
-      };
+      lfes = recurseIntoAttrs
+        (callPackageWithSelf ../interpreters/lfe/all-versions.nix {
+          inherit util beamLib annotateErlangInVersion mainOnly;
+          inherit erlang buildRebar3 buildHex;
+        });
 
       # Non hex packages. Examples how to build Rebar/Mix packages with and
       # without helper functions buildRebar3 and buildMix.
