@@ -2,7 +2,8 @@
 , mainOnly ? false }:
 
 let
-  releases = [ ./1.10.nix ];
+  releases =
+    if mainOnly then [ ./1.10.0.nix ] else [ ./1.10.0.nix ./1.10.4.nix ];
 
   pkgs =
     map (r: beamLib.callElixir r { inherit rebar erlang debugInfo; }) releases;
