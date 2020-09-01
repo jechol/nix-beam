@@ -2,9 +2,26 @@
 , mainOnly ? false }:
 
 let
-  releases = if mainOnly then [ ./1.3.nix ] else [ ./1.2.nix ./1.3.nix ];
-  pkgs = map (r: beamLib.callLFE r { inherit erlang buildRebar3 buildHex; })
-    releases;
+  releases = [
+    {
+      nix = ./1.2.nix;
+      isMain = false;
+      maxOTPVersion = "19";
+    }
+    {
+      nix = ./1.3.nix;
+      isMain = true;
+      maxOTPVersion = "21";
+    }
+  ];
+
+  otpCompatibleRels = builtins.filter
+    (r: builtins.compareVersions erlang.version r.maxOTPVersion <= 0) releases;
+
+  filteredByMain = builtins.filter (r: r.isMain || !mainOnly) otpCompatibleRels;
+
+  pkgs = map (r: beamLib.callLFE r.nix { inherit erlang buildRebar3 buildHex; })
+    filteredByMain;
 
   pairs = map (pkg: {
     name = util.snakeVersion pkg.name;
