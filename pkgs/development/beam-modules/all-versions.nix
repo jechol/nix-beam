@@ -31,14 +31,14 @@ let
       # rebar3 port compiler plugin is required by buildRebar3
       pc = callAndAnnotate ./pc { };
 
-      elixirs = recurseIntoAttrs
+      elixirs = lib.attrsets.recurseIntoAttrs
         (callPackageWithSelf ../interpreters/elixir/all-versions.nix {
           inherit util annotateErlangInVersion mainOnly;
           inherit rebar erlang;
           debugInfo = true;
         });
 
-      lfes = recurseIntoAttrs
+      lfes = lib.attrsets.recurseIntoAttrs
         (callPackageWithSelf ../interpreters/lfe/all-versions.nix {
           inherit util beamLib annotateErlangInVersion mainOnly;
           inherit erlang buildRebar3 buildHex;
