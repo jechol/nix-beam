@@ -1,4 +1,5 @@
-{ stdenv, pkgs, rebar, erlang, debugInfo, annotateErlangInVersion, util }:
+{ stdenv, pkgs, rebar, erlang, debugInfo, annotateErlangInVersion, util
+, mainOnly ? false }:
 
 let
   builder =

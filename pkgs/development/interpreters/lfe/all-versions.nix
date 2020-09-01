@@ -1,5 +1,5 @@
 { fetchpatch, stdenv, pkgs, rebar, erlang, buildRebar3, buildHex
-, annotateErlangInVersion, lib, util }:
+, annotateErlangInVersion, lib, util, mainOnly ? false }:
 
 let
   builder = pkgs.callPackage ./generic-builder.nix {

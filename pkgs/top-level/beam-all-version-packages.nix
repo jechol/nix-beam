@@ -9,12 +9,20 @@ let
 
   main_erlangs = recurseIntoAttrs (erlangs.override { mainOnly = true; });
 
+  packages = (mapAttrs (_: erlang:
+    recurseIntoAttrs (callPackage ../development/beam-modules/all-versions.nix {
+      inherit erlang util;
+    })) (util.filterDerivations erlangs));
+
+  main_packages = recurseIntoAttrs (mapAttrs (_: erlang:
+    recurseIntoAttrs (callPackage ../development/beam-modules/all-versions.nix {
+      inherit erlang util;
+    })) (util.filterDerivations main_erlangs));
+
 in recurseIntoAttrs {
-  all = recurseIntoAttrs { inherit erlangs; };
-  main = recurseIntoAttrs { erlangs = main_erlangs; };
-  # packages = attrsets.recurseIntoAttrs (attrsets.mapAttrs (_: erlang:
-  #   attrsets.recurseIntoAttrs
-  #   (callPackage ../development/beam-modules/all-versions.nix {
-  #     inherit erlang util;
-  #   })) erlangs);
+  all = recurseIntoAttrs { inherit erlangs packages; };
+  main = recurseIntoAttrs {
+    erlangs = main_erlangs;
+    packages = main_packages;
+  };
 }
