@@ -3,10 +3,9 @@
 with lib;
 with attrsets;
 let
-  erlangs = recurseIntoAttrs
-    (callPackage ../development/interpreters/erlang/all-versions.nix {
-      inherit util;
-    });
+  erlangs = (callPackage ../development/interpreters/erlang/all-versions.nix {
+    inherit util;
+  });
 
   main_erlangs = recurseIntoAttrs (erlangs.override { mainOnly = true; });
 
