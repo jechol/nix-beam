@@ -1,6 +1,9 @@
 { lib, wxGTK30, beamLib, util, deriveErlangFeatureVariants, mainOnly ? false }:
 
 let
+  releases =
+    if mainOnly then [ ./R23.0.nix ] else [ ./R23.0.nix ./R23.0.3.nix ];
+
   buildOpts = {
     wxGTK = wxGTK30;
     # Can be enabled since the bug has been fixed in https://github.com/erlang/otp/pull/2508
@@ -15,10 +18,7 @@ let
     nox = { wxSupport = false; };
   };
 
-  releases =
-    if mainOnly then [ ./R23.0.nix ] else [ ./R23.0.nix ./R23.0.3.nix ];
-
   variantsPerReleases =
     map (r: deriveErlangFeatureVariants r buildOpts featureOpts) releases;
 
-in builtins.foldl' (acc: attrs: acc // attrs) { } variantsPerReleases
+in util.mergeListOfAttrs variantsPerReleases

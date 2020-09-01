@@ -22,18 +22,11 @@ let
       featureStringToFlags = util.featureCombination featureOpts "_";
     in lib.attrsets.mapAttrs' (overrideFeature basePkg) featureStringToFlags;
 
-  r23 = callPackage ./R23 {
-    inherit beamLib util mainOnly deriveErlangFeatureVariants;
-  };
-  r22 = callPackage ./R22 {
-    inherit beamLib util mainOnly deriveErlangFeatureVariants;
-  };
-in rec {
-  # let
-  # releases = [ (callPackage ./R23/default.nix { inherit beamLib util; }) ];
+  majorVersions = if mainOnly then [ ./R23 ./R22 ] else [ ./R23 ./R22 ];
 
-  # releaseAttrs = builtins.foldl' (acc: release: acc // release) { } releases;
+  releasesPerMajorVersion = map (r:
+    callPackage r {
+      inherit beamLib util mainOnly deriveErlangFeatureVariants;
+    }) majorVersions;
 
-  # in releaseAttrs
-
-} // r22 // r23
+in util.mergeListOfAttrs releasesPerMajorVersion

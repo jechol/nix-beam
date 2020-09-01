@@ -50,4 +50,7 @@ with lib; rec {
 
   filterDerivations = attrs:
     attrsets.filterAttrs (k: v: attrsets.isDerivation v) attrs;
+
+  mergeListOfAttrs = listOfAttrs:
+    builtins.foldl' (acc: attrs: acc // attrs) { } listOfAttrs;
 }
