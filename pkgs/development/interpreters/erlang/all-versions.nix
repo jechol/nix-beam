@@ -24,8 +24,7 @@ rec {
 
   makeVariants = release:
     let
-      basePkg = builtins.trace (beamLib.callErlang release buildOpts)
-        (beamLib.callErlang release buildOpts);
+      basePkg = beamLib.callErlang release buildOpts;
       featureStringToFlags = util.featureCombination featureOpts "_";
       makePkg = featureString: featureFlag:
         let
@@ -38,7 +37,7 @@ rec {
           namedPkg = featurePkg.overrideAttrs (o: { name = pkgName; });
         in {
           name = pkgPath;
-          value = basePkg;
+          value = namedPkg;
         };
 
     in lib.attrsets.mapAttrs' makePkg featureStringToFlags;
