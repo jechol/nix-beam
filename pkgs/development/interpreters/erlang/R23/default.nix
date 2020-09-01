@@ -8,7 +8,9 @@ let
     parallelBuild = true;
   };
 
-  featureOpts = {
+  featureOpts = if mainOnly then
+    { }
+  else {
     odbc = { odbcSupport = true; };
     javac = { javacSupport = true; };
     nox = { wxSupport = false; };
