@@ -1,4 +1,4 @@
-{ beamLib, erlang, buildRebar3, buildHex, annotateErlangInVersion, util
+{ lib, beamLib, erlang, buildRebar3, buildHex, annotateErlangInVersion, util
 , mainOnly ? false }:
 
 let
@@ -20,8 +20,9 @@ let
     }
   ];
 
-  otpCompatibleRels = builtins.filter
-    (r: builtins.compareVersions erlang.version r.maxOTPVersion <= 0) releases;
+  otpCompatibleRels = builtins.filter (r:
+    builtins.compareVersions (lib.versions.major erlang.version) r.maxOTPVersion
+    <= 0) releases;
 
   filteredByMain = builtins.filter (r: r.isMain || !mainOnly) otpCompatibleRels;
 
