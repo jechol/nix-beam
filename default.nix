@@ -10,7 +10,5 @@
 
 let util = pkgs.callPackage ./lib/util.nix { };
 in {
-  beam = pkgs.callPackage ./pkgs/top-level/beam-all-version-packages.nix {
-    inherit util;
-  };
+  beam = pkgs.callPackage ./pkgs/top-level/beam-packages.nix { inherit util; };
 }
