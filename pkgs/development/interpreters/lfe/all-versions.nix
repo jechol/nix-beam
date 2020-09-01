@@ -4,7 +4,12 @@
 let
   releases = [
     {
-      nix = ./1.2.nix;
+      nix = ./1.2.0.nix;
+      isMain = true;
+      maxOTPVersion = "19";
+    }
+    {
+      nix = ./1.2.1.nix;
       isMain = false;
       maxOTPVersion = "19";
     }
