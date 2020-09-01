@@ -53,4 +53,7 @@ with lib; rec {
 
   mergeListOfAttrs = listOfAttrs:
     builtins.foldl' (acc: attrs: acc // attrs) { } listOfAttrs;
+
+  # This helper not exists nixpkgs-20.03
+  recurseIntoAttrs = attrs: attrs // { recurseForDerivations = true; };
 }
