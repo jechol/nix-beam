@@ -6,17 +6,21 @@ let
 
   majorVersions = [ ./1.10 ./1.9 ./1.8 ./1.7 ./1.6 ];
 
-  deriveElixirs = releases:
-    let
-      pkgs = map (r: beamLib.callElixir r { inherit rebar erlang debugInfo; })
-        releases;
+  deriveElixirs = releases: minimumOTPVersion:
+    if builtins.compareVersions erlang.version minimumOTPVersion >= 0 then
+      let
 
-      pairs = map (pkg: {
-        name = util.snakeVersion pkg.name;
-        value = annotateErlangInVersion pkg;
-      }) pkgs;
+        pkgs = map (r: beamLib.callElixir r { inherit rebar erlang debugInfo; })
+          releases;
 
-    in (builtins.listToAttrs pairs);
+        pairs = map (pkg: {
+          name = util.snakeVersion pkg.name;
+          value = annotateErlangInVersion pkg;
+        }) pkgs;
+
+      in (builtins.listToAttrs pairs)
+    else
+      { };
 
   releasesPerMajorVersion =
     map (r: callPackage r { inherit deriveElixirs mainOnly; }) majorVersions;
