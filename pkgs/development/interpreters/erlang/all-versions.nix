@@ -25,6 +25,9 @@ let
   r23 = callPackage ./R23 {
     inherit beamLib util mainOnly deriveErlangFeatureVariants;
   };
+  r22 = callPackage ./R22 {
+    inherit beamLib util mainOnly deriveErlangFeatureVariants;
+  };
 in rec {
   # let
   # releases = [ (callPackage ./R23/default.nix { inherit beamLib util; }) ];
@@ -33,4 +36,4 @@ in rec {
 
   # in releaseAttrs
 
-} // r23
+} // r22 // r23
