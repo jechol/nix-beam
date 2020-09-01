@@ -15,7 +15,8 @@ let
     nox = { wxSupport = false; };
   };
 
-  releases = [ ./R23.nix ];
+  releases =
+    if mainOnly then [ ./R23.0.nix ] else [ ./R23.0.nix ./R23.0.3.nix ];
 
   variantsPerReleases =
     map (r: deriveErlangFeatureVariants r buildOpts featureOpts) releases;
