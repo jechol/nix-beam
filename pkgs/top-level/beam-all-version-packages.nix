@@ -2,13 +2,16 @@
 
 with lib;
 attrsets.recurseIntoAttrs rec {
-  erlangs = util.filterDerivations
-    (callPackage ../development/interpreters/erlang/all-versions.nix {
-      inherit util;
-    });
-  packages = attrsets.recurseIntoAttrs (attrsets.mapAttrs (_: erlang:
-    attrsets.recurseIntoAttrs
-    (callPackage ../development/beam-modules/all-versions.nix {
-      inherit erlang util;
-    })) erlangs);
+  erlangs = (callPackage ../development/interpreters/erlang/all-versions.nix {
+    inherit util;
+  });
+  # erlangs = util.filterDerivations
+  #   (callPackage ../development/interpreters/erlang/all-versions.nix {
+  #     inherit util;
+  #   });
+  # packages = attrsets.recurseIntoAttrs (attrsets.mapAttrs (_: erlang:
+  #   attrsets.recurseIntoAttrs
+  #   (callPackage ../development/beam-modules/all-versions.nix {
+  #     inherit erlang util;
+  #   })) erlangs);
 }

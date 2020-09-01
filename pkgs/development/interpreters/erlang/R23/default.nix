@@ -1,15 +1,6 @@
-{ pkgs, fetchpatch, callPackage, wxGTK30, openssl_1_0_2, lib, util
-, mainOnly ? false }:
+{ lib, wxGTK30, beamLib, util, mainOnly ? false }:
 
-rec {
-  # let
-  beamLib = callPackage ../../beam-modules/lib.nix { };
-  # releases = [ (callPackage ./R23/default.nix { inherit beamLib util; }) ];
-
-  # releaseAttrs = builtins.foldl' (acc: release: acc // release) { } releases;
-
-  # in releaseAttrs
-
+let
   buildOpts = {
     wxGTK = wxGTK30;
     # Can be enabled since the bug has been fixed in https://github.com/erlang/otp/pull/2508
@@ -27,23 +18,19 @@ rec {
       basePkg = builtins.trace (beamLib.callErlang release buildOpts)
         (beamLib.callErlang release buildOpts);
       featureStringToFlags = util.featureCombination featureOpts "_";
-      makePkg = featureString: featureFlag:
+      makePkg = featureString: featureFlags:
         let
           # pkgPath = util.makePkgPath "erlang" release.version featureString;
           # pkgName = util.makePkgName "erlang" release.version featureString;
           pkgPath = util.makePkgPath "erlang" basePkg.version featureString;
           pkgName = util.makePkgName "erlang" basePkg.version featureString;
 
-          featurePkg = basePkg.override featureFlag;
+          featurePkg = basePkg.override featureFlags;
           namedPkg = featurePkg.overrideAttrs (o: { name = pkgName; });
-        in {
-          name = pkgPath;
-          value = namedPkg;
-        };
-
-    in lib.attrsets.mapAttrs' makePkg featureStringToFlags;
+        in namedPkg;
+    in lib.attrsets.mapAttrs makePkg featureStringToFlags;
 
   releases = [ ./R23.nix ];
   nestedVariants = map makeVariants releases;
   flatVariants = builtins.foldl' (acc: attrs: acc // attrs) nestedVariants;
-}
+in flatVariants
