@@ -55,4 +55,8 @@ let
       # An example of Erlang/C++ package.
       cuter = callAndAnnotate ../tools/erlang/cuter { };
     };
-in lib.makeExtensible packages
+
+  allPackages = lib.makeExtensible packages;
+  mainPackages = (with allPackages; { inherit rebar rebar3 hex elixirs; });
+
+in if mainOnly then mainPackages else allPackages
