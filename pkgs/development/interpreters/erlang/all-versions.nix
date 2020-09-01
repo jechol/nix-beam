@@ -38,12 +38,12 @@ rec {
           namedPkg = featurePkg.overrideAttrs (o: { name = pkgName; });
         in {
           name = pkgPath;
-          value = namedPkg;
+          value = basePkg;
         };
 
     in lib.attrsets.mapAttrs' makePkg featureStringToFlags;
 
   releases = [ ./R23.nix ];
   nestedVariants = map makeVariants releases;
-  flatVariants = builtins.foldl' (acc: attrs: acc // attrs) nestedVariants;
+  flatVariants = builtins.foldl' (acc: attrs: acc // attrs) { } nestedVariants;
 }
