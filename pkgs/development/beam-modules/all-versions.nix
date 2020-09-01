@@ -1,4 +1,4 @@
-{ callPackage, stdenv, pkgs, erlang, lib, util }:
+{ callPackage, stdenv, pkgs, erlang, lib, util, mainOnly ? false }:
 
 let
   packages = self:
@@ -29,13 +29,13 @@ let
       pc = callAndAnnotate ./pc { };
 
       elixirs = callPackageWithSelf ../interpreters/elixir/all-versions.nix {
-        inherit util annotateErlangInVersion;
+        inherit util annotateErlangInVersion mainOnly;
         inherit rebar erlang;
         debugInfo = true;
       };
 
       lfes = callPackageWithSelf ../interpreters/lfe/all-versions.nix {
-        inherit util annotateErlangInVersion;
+        inherit util annotateErlangInVersion mainOnly;
         inherit erlang buildRebar3 buildHex;
       };
 

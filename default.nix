@@ -9,7 +9,7 @@
 { pkgs ? import <nixpkgs> { } }:
 
 let util = pkgs.callPackage ./lib/util.nix { };
-in rec {
+in {
   beam = pkgs.callPackage ./pkgs/top-level/beam-all-version-packages.nix {
     inherit util;
   };
