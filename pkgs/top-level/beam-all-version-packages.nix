@@ -1,14 +1,14 @@
 { pkgs, callPackage, wxGTK30, openssl_1_0_2, lib, util }:
 
 with lib;
-attrsets.recurseIntoAttrs rec {
+let
   erlangs = (callPackage ../development/interpreters/erlang/all-versions.nix {
     inherit util;
   });
-  # erlangs = util.filterDerivations
-  #   (callPackage ../development/interpreters/erlang/all-versions.nix {
-  #     inherit util;
-  #   });
+in attrsets.recurseIntoAttrs rec {
+  all = { inherit erlangs; };
+
+  main = { erlangs = erlangs.override { mainOnly = true; }; };
   # packages = attrsets.recurseIntoAttrs (attrsets.mapAttrs (_: erlang:
   #   attrsets.recurseIntoAttrs
   #   (callPackage ../development/beam-modules/all-versions.nix {
