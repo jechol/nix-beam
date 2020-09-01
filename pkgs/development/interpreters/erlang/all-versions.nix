@@ -21,7 +21,18 @@ let
       featureStringToFlags = util.featureCombination featureOpts "_";
     in lib.attrsets.mapAttrs' (overrideFeature basePkg) featureStringToFlags;
 
-  majorVersions = [ ./R23 ./R22 ./R21 ./R20 ./R19 ./R18 ./R16 ];
+  majorVersions = if mainOnly then [
+    ./R23
+    ./R22
+  ] else [
+    ./R23
+    ./R22
+    ./R21
+    ./R20
+    ./R19
+    ./R18
+    ./R16
+  ];
 
   releasesPerMajorVersion = map (r:
     callPackage r {
