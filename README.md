@@ -1,37 +1,47 @@
-# nur-packages-template
+![Build and populate cache](https://github.com/jechol/nur-packages/workflows/Build%20and%20populate%20cache/badge.svg)
 
-**A template for [NUR](https://github.com/nix-community/NUR) repositories**
+[![Cachix Cache](https://img.shields.io/badge/cachix-jechol-blue.svg)](https://jechol.cachix.org)
 
-## Setup
+## Nix Packages for Erlang, Elixir, LFE
 
-1. Fork this repo
-2. Add your packages to the [pkgs](./pkgs) directory and to
-   [default.nix](./default.nix)
-   * Remember to mark the broken packages as `broken = true;` in the `meta`
-     attribute, or travis (and consequently caching) will fail!
-   * Library functions, modules and overlays go in the respective directories
-3. Choose your CI: Depending on your preference you can use github actions (recommended) or [Travis ci](https://travis-ci.com).
-   - Github actions: Change your NUR repo name and optionally add a cachix name in [.github/workflows/build.yml](./.github/workflows/build.yml) and change the cron timer
-     to a random value as described in the file
-   - Travis ci: Change your NUR repo name and optionally your cachix repo name in 
-   [.travis.yml](./.travis.yml). Than enable travis in your repo. You can add a cron job in the repository settings on travis to keep your cachix cache fresh
-5. Change your travis and cachix names on the README template section and delete
-   the rest
-6. [Add yourself to NUR](https://github.com/nix-community/NUR#how-to-add-your-own-repository)
+## Installation
 
-## README template
+> You must have installed `nix`. See https://nixos.org for more information.
 
-# nur-packages
+First include NUR in your `packageOverrides`:
 
-**My personal [NUR](https://github.com/nix-community/NUR) repository**
+To make NUR accessible for your login user, add the following to `~/.config/nixpkgs/config.nix`:
 
-<!-- Remove this if you don't use github actions -->
-![Build and populate cache](https://github.com/nix-community/<YOUR-GITHUB-USER>/workflows/Build%20and%20populate%20cache/badge.svg)
+```nix
+{
+  packageOverrides = pkgs: {
+    nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {
+      inherit pkgs;
+    };
+  };
+}
+```
 
-<!--
-Uncomment this if you use travis:
+## How to use
 
-[![Build Status](https://travis-ci.com/<YOUR_TRAVIS_USERNAME>/nur-packages.svg?branch=master)](https://travis-ci.com/<YOUR_TRAVIS_USERNAME>/nur-packages)
--->
-[![Cachix Cache](https://img.shields.io/badge/cachix-<YOUR_CACHIX_CACHE_NAME>-blue.svg)](https://<YOUR_CACHIX_CACHE_NAME>.cachix.org)
+Then packages can be used or installed from the NUR namespace.
+
+```console
+$ nix-shell -p nur.repos.jechol.beam.main.erlangs.erlang_23_0
+nix-shell> erl -version
+Erlang (SMP,ASYNC_THREADS,HIPE) (BEAM) emulator version 11.0
+```
+
+or
+
+```console
+$ nix-env -f '<nixpkgs>' -iA nur.repos.jechol.beam.main.erlangs.erlang_23_0
+```
+
+ `beam.main` includes only combinations of major versions of Erlang/Elixir.
+
+ On the other hands, `beam.all` includes every combinations and other tools. For example,
+ * `beam.all.erlangs.erlang_22_3_javac_odbc` : Erlang 22.3 with support for Java and ODBC
+ * `beam.all.packages.erlang_22_3.elixirs.elixir_1_10_4` : Elixir 1.10.4 running on Erlang 22.3
+ * `beam.all.packages.erlang_22_3.hex` : Hex running on Erlang 22.3
 
