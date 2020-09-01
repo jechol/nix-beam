@@ -5,7 +5,7 @@ let
   beamLib = callPackage ../../beam-modules/lib.nix { };
 
   # majorVersions = [ ./1.10 ./1.9 ./1.8 ./1.7 ./1.6 ];
-  majorVersions = [ ./1.10 ./1.9 ];
+  majorVersions = [ ./1.10 ./1.9 ./1.8 ];
 
   deriveElixirs = releases:
     let
