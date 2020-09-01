@@ -1,4 +1,5 @@
-{ lib, wxGTK30, beamLib, util, deriveErlangFeatureVariants, mainOnly ? false }:
+{ lib, openssl_1_0_2, wxGTK30, beamLib, util, deriveErlangFeatureVariants
+, mainOnly ? false }:
 
 let
   releases =

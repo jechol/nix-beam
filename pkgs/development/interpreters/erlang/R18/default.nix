@@ -2,12 +2,12 @@
 , mainOnly ? false }:
 
 let
-  releases = if mainOnly then [ ./R22.0.nix ] else [ ./R22.0.nix ./R22.3.nix ];
+  releases =
+    if mainOnly then [ ./R18.0.nix ] else [ ./R18.0.nix ./R18.3.4.8.nix ];
 
   buildOpts = {
     wxGTK = wxGTK30;
-    # Can be enabled since the bug has been fixed in https://github.com/erlang/otp/pull/2508
-    parallelBuild = true;
+    openssl = openssl_1_0_2;
   };
 
   featureOpts = if mainOnly then
