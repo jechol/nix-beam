@@ -6,6 +6,7 @@
 # commands such as:
 #     nix-build -A mypackage
 
+{ ... }:
 let
   util = pkgs.callPackage ./lib/util.nix { };
   pkgs = import
