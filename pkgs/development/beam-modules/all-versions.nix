@@ -23,17 +23,20 @@ let
     in rec {
       # Functions
       fetchHex = callPackageWithSelf ./fetch-hex.nix { };
-      fetchRebar3Deps = callPackageWithSelf ./fetch-rebar-deps.nix { };
-      rebar3Relx = callPackageWithSelf ./rebar3-release.nix { };
+      fetchRebar3Deps =
+        callPackageWithSelf ./fetch-rebar-deps.nix { inherit rebar3; };
+      rebar3Relx = callPackageWithSelf ./rebar3-release.nix { inherit erlang; };
 
-      buildRebar3 = callPackageWithSelf ./build-rebar3.nix { };
-      buildHex = callPackageWithSelf ./build-hex.nix { };
-      buildErlangMk = callPackageWithSelf ./build-erlang-mk.nix { };
-      buildMix = callPackageWithSelf ./build-mix.nix { };
+      buildRebar3 =
+        callPackageWithSelf ./build-rebar3.nix { inherit erlang rebar3; };
+      buildHex = callPackageWithSelf ./build-hex.nix { inherit buildRebar3; };
+      buildErlangMk =
+        callPackageWithSelf ./build-erlang-mk.nix { inherit erlang; };
 
       # Derivations
-      rebar = callAndAnnotate ../tools/build-managers/rebar { };
-      rebar3 = callAndAnnotate ../tools/build-managers/rebar3 { };
+      rebar = callAndAnnotate ../tools/build-managers/rebar { inherit erlang; };
+      rebar3 =
+        callAndAnnotate ../tools/build-managers/rebar3 { inherit erlang; };
       # rebar3 port compiler plugin is required by buildRebar3
       pc = callAndAnnotate ./pc { };
 
@@ -56,6 +59,10 @@ let
       hexes = util.recurseIntoAttrs (mapAttrs (_: elixir:
         (annotateDep (callPackageWithSelf ./hex { inherit elixir; }) elixir))
         (util.filterDerivations elixirs));
+      buildMixes = util.recurseIntoAttrs (mapAttrs (_: elixir:
+        (annotateDep
+          (callPackageWithSelf ./build-mix.nix { inherit elixir erlang; })
+          elixir)) (util.filterDerivations elixirs));
       webdriver = annotateDep
         ((callPackageWithSelf ./webdriver { inherit erlang; }).overrideAttrs
           (o: { name = "${o.name}-${o.version}"; })) erlang;
