@@ -12,7 +12,7 @@ with lib; rec {
         onComb = map (c: [ h ] ++ c) offComb;
       in offComb ++ onComb;
 
-  featureCombination = attrs: sep:
+  combineFeatures = attrs: sep:
     let
       names = builtins.attrNames attrs;
       namesComb = combination names;

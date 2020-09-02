@@ -18,7 +18,7 @@ let
   deriveErlangFeatureVariants = release: buildOpts: featureOpts:
     let
       basePkg = beamLib.callErlang release buildOpts;
-      featureStringToFlags = util.featureCombination featureOpts "_";
+      featureStringToFlags = util.combineFeatures featureOpts "_";
     in lib.attrsets.mapAttrs' (overrideFeature basePkg) featureStringToFlags;
 
   majorVersions = if mainOnly then [
