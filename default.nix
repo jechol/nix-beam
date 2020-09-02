@@ -6,7 +6,9 @@
 # commands such as:
 #     nix-build -A mypackage
 
-{ pkgs ? import <nixpkgs> { } }:
+{ pkgs ?
+  import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/20.03.tar.gz")
+  { } }:
 
 let util = pkgs.callPackage ./lib/util.nix { };
 in {
