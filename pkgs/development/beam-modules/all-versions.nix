@@ -59,13 +59,12 @@ let
       hexes = util.recurseIntoAttrs (mapAttrs (_: elixir:
         (annotateDep (callPackageWithSelf ./hex { inherit elixir; }) elixir))
         (util.filterDerivations elixirs));
-      # buildMixes = util.recurseIntoAttrs (mapAttrs (_: elixir:
-      #   let
-      #     hex =
-      #       annotateDep (callPackageWithSelf ./hex { inherit elixir; }) elixir;
-      #   in (annotateDep
-      #     (callPackageWithSelf ./build-mix.nix { inherit hex elixir erlang; })
-      #     elixir)) (util.filterDerivations elixirs));
+      buildMixes = util.recurseIntoAttrs (mapAttrs (_: elixir:
+        let
+          hex =
+            annotateDep (callPackageWithSelf ./hex { inherit elixir; }) elixir;
+        in (callPackageWithSelf ./build-mix.nix { inherit hex elixir erlang; }))
+        (util.filterDerivations elixirs));
       webdriver = annotateDep
         ((callPackageWithSelf ./webdriver { inherit erlang; }).overrideAttrs
           (o: { name = "${o.name}-${o.version}"; })) erlang;
@@ -80,4 +79,4 @@ let
   allPackages = lib.makeExtensible packages;
   mainPackages = (with allPackages; { inherit rebar rebar3 hexes elixirs; });
 
-in if mainOnly then allPackages else allPackages
+in if mainOnly then mainPackages else allPackages
