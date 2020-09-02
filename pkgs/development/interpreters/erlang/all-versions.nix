@@ -21,10 +21,9 @@ let
       featureStringToFlags = util.combineFeatures featureOpts "_";
     in lib.attrsets.mapAttrs' (overrideFeature basePkg) featureStringToFlags;
 
-  majorVersions = if mainOnly then [
-    ./R23
-    ./R22
-  ] else [
+  majorVersions = if mainOnly then
+    [ ./R23 ]
+  else [
     ./R23
     ./R22
     ./R21
