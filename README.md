@@ -1,4 +1,4 @@
-![Build and populate cache](https://github.com/jechol/nur-packages/workflows/Build%20and%20populate%20cache/badge.svg)
+[![Build and populate cache](https://github.com/jechol/nur-packages/workflows/Build%20and%20populate%20cache/badge.svg)](https://github.com/jechol/nur-packages/actions)
 [![Cachix Cache](https://img.shields.io/badge/cachix-jechol-blue.svg)](https://jechol.cachix.org)
 
 ## Nix Packages for Erlang, Elixir, LFE

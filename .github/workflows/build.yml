@@ -3,7 +3,6 @@ on:
   pull_request:
   push:
     paths:
-      - "!README.md"
       - "!.gitignore"
   schedule:
     # rebuild everyday at 2:51
@@ -47,7 +46,7 @@ jobs:
         run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
       - name: Setup cachix
         uses: cachix/cachix-action@v6
-        if: ${{ matrix.cachixName != 'jechol' }}
+        if: ${{ matrix.cachixName != '' }}
         with:
           name: ${{ matrix.cachixName }}
           signingKey: "${{ secrets.CACHIX_SIGNING_KEY }}"
