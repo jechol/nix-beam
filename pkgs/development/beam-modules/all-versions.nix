@@ -57,12 +57,12 @@ let
         (annotateDep (callPackageWithSelf ./hex { inherit elixir; }) elixir))
         (util.filterDerivations elixirs));
       webdriver = annotateDep
-        ((callPackageWithSelf ./webdriver { }).overrideAttrs
+        ((callPackageWithSelf ./webdriver { inherit erlang; }).overrideAttrs
           (o: { name = "${o.name}-${o.version}"; })) erlang;
-      relxExe = callAndAnnotate ../tools/erlang/relx-exe { };
+      relxExe = callAndAnnotate ../tools/erlang/relx-exe { inherit erlang; };
 
       # An example of Erlang/C++ package.
-      cuter = callAndAnnotate ../tools/erlang/cuter { };
+      cuter = callAndAnnotate ../tools/erlang/cuter { inherit erlang; };
     };
 
   allPackages = lib.makeExtensible packages;
