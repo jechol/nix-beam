@@ -7,13 +7,19 @@ let
   packages = self:
     let
       callPackageWithSelf = lib.callPackageWith (pkgs // self);
-      annotateErlangInVersion = drv:
+
+      annotateDep = drv: dep:
         drv.overrideAttrs (o:
           let drvName = if o ? name then o.name else "${o.pname}-${o.version}";
-          in { name = "${drvName}_${erlang.name}"; });
+          in { name = "${drvName}_${dep.name}"; });
+      annotateErlangInVersion = drv: annotateDep drv erlang;
 
       callAndAnnotate = drv: args:
         annotateErlangInVersion (callPackageWithSelf drv args);
+      callAndAnnotateElixir = drv:
+        { elixir }@args:
+        annotateDep (callPackageWithSelf drv args) elixir;
+
     in rec {
       # Functions
       fetchHex = callPackageWithSelf ./fetch-hex.nix { };
@@ -46,10 +52,13 @@ let
 
       # Non hex packages. Examples how to build Rebar/Mix packages with and
       # without helper functions buildRebar3 and buildMix.
-      hex = callAndAnnotate ./hex { };
-      webdriver = annotateErlangInVersion
+      # hex = callAndAnnotate ./hex { };
+      hexes = util.recurseIntoAttrs (mapAttrs (_: elixir:
+        (annotateDep (callPackageWithSelf ./hex { inherit elixir; }) elixir))
+        (util.filterDerivations elixirs));
+      webdriver = annotateDep
         ((callPackageWithSelf ./webdriver { }).overrideAttrs
-          (o: { name = "${o.name}-${o.version}"; }));
+          (o: { name = "${o.name}-${o.version}"; })) erlang;
       relxExe = callAndAnnotate ../tools/erlang/relx-exe { };
 
       # An example of Erlang/C++ package.
@@ -57,6 +66,6 @@ let
     };
 
   allPackages = lib.makeExtensible packages;
-  mainPackages = (with allPackages; { inherit rebar rebar3 hex elixirs; });
+  mainPackages = (with allPackages; { inherit rebar rebar3 hexes elixirs; });
 
 in if mainOnly then mainPackages else allPackages
