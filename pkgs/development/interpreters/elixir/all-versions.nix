@@ -1,5 +1,5 @@
-{ callPackage, rebar, erlang, debugInfo, annotateErlangInVersion, util, mainOnly
-}:
+{ lib, callPackage, rebar, erlang, debugInfo, annotateErlangInVersion, util
+, mainOnly }:
 
 let
   beamLib = callPackage ../../beam-modules/lib.nix { };
@@ -16,8 +16,12 @@ let
     ./1.6
   ];
 
-  deriveElixirs = releases: minimumOTPVersion:
-    if builtins.compareVersions erlang.version minimumOTPVersion >= 0 then
+  deriveElixirs = releases: minOtp: maxOtp:
+    let
+      majorVer = lib.versions.major erlang.version;
+      meetMin = builtins.compareVersions majorVer minOtp >= 0;
+      meetMax = builtins.compareVersions majorVer maxOtp <= 0;
+    in if meetMin && meetMax then
       let
 
         pkgs = map (r: beamLib.callElixir r { inherit rebar erlang debugInfo; })
