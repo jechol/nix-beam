@@ -56,6 +56,8 @@ jobs:
         # TODO switch to default nixpkgs channel once nix-build-uncached 1.0.0 is in stable
         # run: NIXPKGS_ALLOW_INSECURE=1 nix run -I 'nixpkgs=channel:nixos-unstable' nixpkgs.nix-build-uncached -c nix-build-uncached ci.nix -A cacheOutputs
         # Above failed in mac with error "failed setting rlimit: invalid argument"
+        run: NIXPKGS_ALLOW_INSECURE=1 nix-build
+      - name: Cache nix packages
         run: NIXPKGS_ALLOW_INSECURE=1 nix-build | cachix push ${{ matrix.cachixName }}
       - name: Trigger NUR update
         if: ${{ matrix.nurRepo != '' }}
