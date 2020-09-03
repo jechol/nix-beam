@@ -4,8 +4,17 @@
 let
   beamLib = callPackage ../../beam-modules/lib.nix { };
 
-  majorVersions =
-    if mainOnly then [ ./1.10 ./1.9 ] else [ ./1.10 ./1.9 ./1.8 ./1.7 ./1.6 ];
+  majorVersions = if mainOnly then [
+    ./1.10
+    ./1.9
+    ./1.8
+  ] else [
+    ./1.10
+    ./1.9
+    ./1.8
+    ./1.7
+    ./1.6
+  ];
 
   deriveElixirs = releases: minimumOTPVersion:
     if builtins.compareVersions erlang.version minimumOTPVersion >= 0 then
