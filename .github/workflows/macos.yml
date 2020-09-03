@@ -1,4 +1,4 @@
-name: "Build and populate cache"
+name: "macOS"
 on:
   pull_request:
   push:
@@ -35,7 +35,7 @@ jobs:
           # - nixpkgs=channel:nixos-unstable
           - nixpkgs=channel:nixpkgs-unstable
           # - nixpkgs=channel:nixos-20.03
-        os: [ubuntu-18.04, macos-10.15]
+        os: [macos-10.15]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository

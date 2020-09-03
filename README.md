@@ -1,4 +1,5 @@
-[![Build and populate cache](https://github.com/jechol/nur-packages/workflows/Build%20and%20populate%20cache/badge.svg)](https://github.com/jechol/nur-packages/actions)
+[![Linux](https://github.com/jechol/nur-packages/workflows/Linux/badge.svg)](https://github.com/jechol/nur-packages/actions?query=workflow%3A%22Linux%22)
+[![macOS](https://github.com/jechol/nur-packages/workflows/macOS/badge.svg)](https://github.com/jechol/nur-packages/actions?query=workflow%3A%22macOS%22)
 [![Cachix Cache](https://img.shields.io/badge/cachix-jechol-blue.svg)](https://jechol.cachix.org)
 
 ## Nix Packages for Erlang, Elixir, LFE
@@ -37,10 +38,10 @@ or
 $ nix-env -f '<nixpkgs>' -iA nur.repos.jechol.beam.main.erlangs.erlang_23_0
 ```
 
- `beam.main` includes only combinations of major versions of Erlang/Elixir.
+`beam.main` includes only combinations of major versions of Erlang/Elixir.
 
- On the other hands, `beam.all` includes every combinations and other tools. For example,
- * `beam.all.erlangs.erlang_22_3_javac_odbc` : Erlang 22.3 with support for Java and ODBC
- * `beam.all.packages.erlang_22_3.elixirs.elixir_1_10_4` : Elixir 1.10.4 running on Erlang 22.3
- * `beam.all.packages.erlang_22_3.hex` : Hex running on Erlang 22.3
+On the other hands, `beam.all` includes every combinations and other tools. For example,
 
+- `beam.all.erlangs.erlang_22_3_javac_odbc` : Erlang 22.3 with support for Java and ODBC
+- `beam.all.packages.erlang_22_3.elixirs.elixir_1_10_4` : Elixir 1.10.4 running on Erlang 22.3
+- `beam.all.packages.erlang_22_3.hex` : Hex running on Erlang 22.3
