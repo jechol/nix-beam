@@ -6,11 +6,10 @@
 # commands such as:
 #     nix-build -A mypackage
 
-{ ... }:
-let
-  util = pkgs.callPackage ./lib/util.nix { };
-  pkgs = import
-    (fetchTarball "https://github.com/NixOS/nixpkgs/archive/20.03.tar.gz") { };
+{ pkgs ?
+  (import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/20.03.tar.gz")
+    { }) }:
+let util = pkgs.callPackage ./lib/util.nix { };
 in {
   beam = pkgs.callPackage ./pkgs/top-level/beam-packages.nix { inherit util; };
 }
