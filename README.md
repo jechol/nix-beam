@@ -29,6 +29,11 @@ Include NUR(Nix User Repository) to `~/.config/nixpkgs/config.nix`:
     nur = import (builtins.fetchTarball
       "https://github.com/nix-community/NUR/archive/master.tar.gz") {
         inherit pkgs;
+
+        repoOverrides = {
+          jechol = import (builtins.fetchTarball
+            "https://github.com/jechol/nur-packages/archive/master.tar.gz") { };
+        };
       };
   };
 }
