@@ -35,7 +35,7 @@ Include NUR(Nix User Repository) to `~/.config/nixpkgs/config.nix`:
 
 ## How to use
 
-Then packages can be used or installed from the NUR namespace.
+Packages can be installed from the `nur` namespace:
 
 ```console
 $ nix-env -f '<nixpkgs>' -iA nur.repos.jechol.beam.main.erlangs.erlang_23_0
@@ -49,9 +49,28 @@ Erlang/OTP 22 [erts-10.4] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads
 Elixir 1.10.0 (compiled with Erlang/OTP 22)
 ```
 
-`beam.main` includes only combinations of major versions of Erlang/Elixir.
+`beam.main` includes major combinations of Erlang/Elixir and pre-built packcages are cached by **Cachix**.
 
-On the other hands, `beam.all` includes every combinations and other tools. For example,
+On the other hands, `beam.all` includes every combinations, but not cached. 
 
-- `beam.all.erlangs.erlang_22_3_javac_odbc` : Erlang 22.3 with support for Java and ODBC
-- `beam.all.packages.erlang_22_3.elixirs.elixir_1_10_4` : Elixir 1.10.4 running on Erlang 22.3
+For example,
+
+- `beam.main.packages.erlang_23_0.elixirs.elixir_1_10_0` : Elixir 1.10.0 compiled with Erlang 23.0 (cached)
+- `beam.all.packages.erlang_22_3.elixirs.elixir_1_10_4` : Elixir 1.10.4 running on Erlang 22.3 (not cached)
+- `beam.all.erlangs.erlang_22_3_javac_odbc` : Erlang 22.3 with support for Java and ODBC (not cached)
+
+You can navigate through packages with `nix repl`:
+
+```
+$ nix repl '<nixpkgs>'
+
+nix-repl> nur.repos.jechol.beam.all.packages.erlang_20_3_8_9<TAB>
+nur.repos.jechol.beam.all.packages.erlang_20_3_8_9                 
+nur.repos.jechol.beam.all.packages.erlang_20_3_8_9_nox
+nur.repos.jechol.beam.all.packages.erlang_20_3_8_9_javac           
+nur.repos.jechol.beam.all.packages.erlang_20_3_8_9_nox_odbc
+nur.repos.jechol.beam.all.packages.erlang_20_3_8_9_javac_nox       
+nur.repos.jechol.beam.all.packages.erlang_20_3_8_9_odbc
+nur.repos.jechol.beam.all.packages.erlang_20_3_8_9_javac_nox_odbc
+nur.repos.jechol.beam.all.packages.erlang_20_3_8_9_javac_odbc
+```
