@@ -1,7 +1,9 @@
-{ stdenv, fetchFromGitHub, fetchHex, erlang, tree }:
+{ stdenv, fetchFromGitHub,
+  fetchHex, erlang,
+  tree }:
 
 let
-  version = "3.14.0";
+  version = "3.12.0";
 
   erlware_commons = fetchHex {
     pkg = "erlware_commons";
@@ -10,18 +12,18 @@ let
   };
   ssl_verify_fun = fetchHex {
     pkg = "ssl_verify_fun";
-    version = "1.1.6";
-    sha256 = "bdb0d2471f453c88ff3908e7686f86f9be327d065cc1ec16fa4540197ea04680";
+    version = "1.1.3";
+    sha256 = "2e120e6505d6e9ededb2836611dfe2f7028432dc280957998e154307b5ea92fe";
   };
   certifi = fetchHex {
     pkg = "certifi";
-    version = "2.5.2";
-    sha256 = "3b3b5f36493004ac3455966991eaf6e768ce9884693d9968055aeeeb1e575040";
+    version = "2.3.1";
+    sha256 = "e12d667d042c11d130594bae2b0097e63836fe8b1e6d6b2cc48f8bb7a2cf7d68";
   };
   providers = fetchHex {
     pkg = "providers";
-    version = "1.8.1";
-    sha256 = "e45745ade9c476a9a469ea0840e418ab19360dc44f01a233304e118a44486ba0";
+    version = "1.7.0";
+    sha256 = "8be66129ca85c2fa74efd8737cdaedd31c1c1af51dd2fd601495a6def4cae4a6";
   };
   getopt = fetchHex {
     pkg = "getopt";
@@ -30,36 +32,42 @@ let
   };
   bbmustache = fetchHex {
     pkg = "bbmustache";
-    version = "1.10.0";
-    sha256 = "43effa3fd4bb9523157af5a9e2276c493495b8459fc8737144aa186cb13ce2ee";
+    version = "1.6.0";
+    sha256 = "53e02d296512a57be03a98c91541b34d2ca64930268030b2d12364a0332015df";
   };
   relx = fetchHex {
     pkg = "relx";
-    version = "4.0.0";
-    sha256 = "6c398119b8912ed5a579fdbf11426b8ee06e95adb8830cbc9672de816880f579";
+    version = "3.28.0";
+    sha256 = "8afb871c0a2a27f0063d973903fc64d2207bc705ecc3607462920683d24ac7b5";
   };
   cf = fetchHex {
     pkg = "cf";
-    version = "0.3.1";
-    sha256 = "315e8d447d3a4b02bcdbfa397ad03bbb988a6e0aa6f44d3add0f4e3c3bf97672";
+    version = "0.2.2";
+    sha256 = "08cvy7skn5d2k4manlx5k3anqgjdvajjhc5jwxbaszxw34q3na28";
   };
   cth_readable = fetchHex {
     pkg = "cth_readable";
-    version = "1.4.8";
-    sha256 = "46c3bb14df581dc7a9dc0cb9e8c755bff596665fb9a23148dd76e3a200804e90";
+    version = "1.4.3";
+    sha256 = "0wr0hba6ka74s3628jrrd7ynjdh7syxigkh7ildg8fgi20ab88fd";
   };
   eunit_formatters = fetchHex {
     pkg = "eunit_formatters";
     version = "0.5.0";
-    sha256 = "d6c8ba213424944e6e05bbc097c32001cdd0abe3925d02454f229b20d68763c9";
+    sha256 = "1jb3hzb216r29x2h4pcjwfmx1k81431rgh5v0mp4x5146hhvmj6n";
+  };
+  hex_core = fetchHex {
+    pkg = "hex_core";
+    version = "0.4.0";
+    sha256 = "8ace8c6cfa10df4cb8be876f42f7446890e124203c094cc7b4e7616fb8de5d7f";
   };
   parse_trans = fetchHex {
     pkg = "parse_trans";
     version = "3.3.0";
-    sha256 = "17ef63abde837ad30680ea7f857dd9e7ced9476cdd7b0394432af4bfc241b960";
+    sha256 = "0q5r871bzx1a8fa06yyxdi3xkkp7v5yqazzah03d6yl3vsmn7vqp";
   };
 
-in stdenv.mkDerivation rec {
+in
+stdenv.mkDerivation rec {
   pname = "rebar3";
   inherit version erlang;
 
@@ -67,7 +75,7 @@ in stdenv.mkDerivation rec {
     owner = "erlang";
     repo = pname;
     rev = version;
-    sha256 = "11bh4vs70lbl2m3iz9g631h4qywb9q0wg938bv9gl4c7l8ldf840";
+    sha256 = "0936ix7lfwsamssap58b265zid7x2m97azrr2qpjcln3xysd16lg";
   };
 
   bootstrapper = ./rebar3-nix-bootstrap;
@@ -77,18 +85,23 @@ in stdenv.mkDerivation rec {
   postPatch = ''
     mkdir -p _checkouts
     mkdir -p _build/default/lib/
-
-    cp --no-preserve=mode -R ${erlware_commons} _build/default/lib/erlware_commons
-    cp --no-preserve=mode -R ${providers} _build/default/lib/providers
-    cp --no-preserve=mode -R ${getopt} _build/default/lib/getopt
-    cp --no-preserve=mode -R ${bbmustache} _build/default/lib/bbmustache
-    cp --no-preserve=mode -R ${certifi} _build/default/lib/certifi
-    cp --no-preserve=mode -R ${cf} _build/default/lib/cf
-    cp --no-preserve=mode -R ${cth_readable} _build/default/lib/cth_readable
-    cp --no-preserve=mode -R ${eunit_formatters} _build/default/lib/eunit_formatters
-    cp --no-preserve=mode -R ${relx} _build/default/lib/relx
-    cp --no-preserve=mode -R ${ssl_verify_fun} _build/default/lib/ssl_verify_fun
-    cp --no-preserve=mode -R ${parse_trans} _build/default/lib/parse_trans
+    cp --no-preserve=mode -R ${erlware_commons} _checkouts/erlware_commons
+    cp --no-preserve=mode -R ${providers} _checkouts/providers
+    cp --no-preserve=mode -R ${getopt} _checkouts/getopt
+    cp --no-preserve=mode -R ${bbmustache} _checkouts/bbmustache
+    cp --no-preserve=mode -R ${certifi} _checkouts/certifi
+    cp --no-preserve=mode -R ${cf} _checkouts/cf
+    cp --no-preserve=mode -R ${cth_readable} _checkouts/cth_readable
+    cp --no-preserve=mode -R ${eunit_formatters} _checkouts/eunit_formatters
+    cp --no-preserve=mode -R ${relx} _checkouts/relx
+    cp --no-preserve=mode -R ${ssl_verify_fun} _checkouts/ssl_verify_fun
+    cp --no-preserve=mode -R ${hex_core} _checkouts/hex_core
+    cp --no-preserve=mode -R ${parse_trans} _checkouts/parse_trans
+    # Bootstrap script expects the dependencies in _build/default/lib
+    # TODO: Make it accept checkouts?
+    for i in _checkouts/* ; do
+        ln -s $(pwd)/$i $(pwd)/_build/default/lib/
+    done
   '';
 
   buildPhase = ''
@@ -102,8 +115,7 @@ in stdenv.mkDerivation rec {
 
   meta = {
     homepage = "https://github.com/rebar/rebar3";
-    description =
-      "Erlang build tool that makes it easy to compile and test Erlang applications, port drivers and releases";
+    description = "Erlang build tool that makes it easy to compile and test Erlang applications, port drivers and releases";
 
     longDescription = ''
       rebar is a self-contained Erlang script, so it's easy to distribute or
@@ -112,7 +124,7 @@ in stdenv.mkDerivation rec {
       of build configuration work. rebar also provides dependency management,
       enabling application writers to easily re-use common libraries from a
       variety of locations (hex.pm, git, hg, and so on).
-    '';
+      '';
 
     platforms = stdenv.lib.platforms.unix;
     maintainers = with stdenv.lib.maintainers; [ gleber tazjin ];
