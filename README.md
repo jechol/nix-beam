@@ -55,7 +55,7 @@ Erlang/OTP 22 [erts-10.4] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads
 Elixir 1.10.0 (compiled with Erlang/OTP 22)
 ```
 
-See? You can use Erlang 23 and Elixir 1.10 on Erlang 22 at the same time! Power of Nix!
+See? You can use Erlang 23 and Elixir 1.10 on Erlang 22 at the same time!
 
 ### Included packages
 
