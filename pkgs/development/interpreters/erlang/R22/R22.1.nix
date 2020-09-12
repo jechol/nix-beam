@@ -4,7 +4,7 @@
 # nix-prefetch-url --unpack https://github.com/erlang/otp/archive/OTP-${version}.tar.gz
 mkDerivation {
   version = "22.1";
-  sha256 = "0jyxpr3dikbpflakz8zg4qz4namjkkxagg8472pk7didp0wg4v6f";
+  sha256 = "0p0lwajq5skbhrx1nw8ncphj409rl6wghjrgk7d3libz12hnwrpn";
 
   prePatch = ''
     substituteInPlace make/configure.in --replace '`sw_vers -productVersion`' "''${MACOSX_DEPLOYMENT_TARGET:-10.12}"

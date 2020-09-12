@@ -3,11 +3,11 @@
 require 'octokit'
 
 def get_tarball_url(r)
-  r[:assets].map { |a| a[:browser_download_url] }.filter { |url| url.end_with?('.tar.gz') && !url.include('bundle') }.first
+  "https://github.com/erlang/otp/archive/OTP-#{get_version(r)}.tar.gz"
 end
 
 def get_version(r)
-  r[:tag_name].match(/([\d\.]+)/)[1]
+  r[:tag_name].gsub('OTP-', '')
 end
 
 def dir(version)
@@ -55,12 +55,14 @@ def write_nix(version, sha256)
   File.write(path, content)
 end
 
-def fetch_new_releases
-  client = Octokit::Client.new
-  otp = client.repo 'erlang/otp'
-  releases = otp.rels[:releases].get.data
+def fetch_releases
+  client = Octokit::Client.new(access_token: ENV['GITHUB_TOKEN'])
+  client.auto_paginate = true
+  client.releases 'erlang/otp'
+end
 
-  releases.filter { |r| new_version?(get_version(r)) }.take(2)
+def fetch_new_releases
+  fetch_releases.filter { |r| new_version?(get_version(r)) }.take(2)
 end
 
 def write_release(r)
