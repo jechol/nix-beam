@@ -57,16 +57,22 @@ def write_nix(version, sha256)
   File.write(path, content)
 end
 
-client = Octokit::Client.new
-otp = client.repo 'erlang/otp'
-releases = otp.rels[:releases].get.data
+def fetch_new_releases
+  client = Octokit::Client.new
+  otp = client.repo 'erlang/otp'
+  releases = otp.rels[:releases].get.data
 
-new_releases = releases.filter { |r| new_version?(get_version(r)) }.take(1)
+  releases.filter { |r| new_version?(get_version(r)) }
+end
 
-new_releases.each do |r|
+def write_release(r)
   version = get_version(r)
   url = get_tarball_url(r)
   sha256 = nix_prefetch_sha256(url)
 
   write_nix(version, sha256)
+end
+
+def write_new_releases
+  fetch_new_releases().map(&:write_release)
 end
