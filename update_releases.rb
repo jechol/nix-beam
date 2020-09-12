@@ -2,8 +2,8 @@
 
 require 'octokit'
 
-def get_tarball_url(r)
-  "https://github.com/erlang/otp/archive/OTP-#{get_version(r)}.tar.gz"
+def get_tarball_url(version)
+  "https://github.com/erlang/otp/archive/OTP-#{version}.tar.gz"
 end
 
 def get_version(r)
@@ -21,6 +21,14 @@ end
 
 def new_version?(version)
   !File.exist?(nix_path(version))
+end
+
+def not_rc_or_patch?(version)
+  # 21.3-rc1 => false
+  # 21.3 => true
+  # 21.3.0 => true
+  # 21.3.3 => false
+  version.match(/\A\d+\.\d+(?:\.0)?\Z/)
 end
 
 def nix_prefetch_sha256(url)
@@ -62,19 +70,21 @@ def fetch_releases
 end
 
 def fetch_new_releases
-  fetch_releases.filter { |r| new_version?(get_version(r)) }.take(2)
+  fetch_releases.filter do |r|
+    v = get_version(r)
+    new_version?(v) && not_rc_or_patch?(v)
+  end.take(2)
 end
 
-def write_release(r)
-  version = get_version(r)
-  url = get_tarball_url(r)
+def write_version(version)
+  url = get_tarball_url(version)
   sha256 = nix_prefetch_sha256(url)
 
   write_nix(version, sha256)
 end
 
 def write_new_releases
-  fetch_new_releases.map { |r| write_release(r) }
+  fetch_new_releases.map { |r| write_version(get_version(r)) }
 end
 
 write_new_releases if ENV['GITHUB_ACTIONS']
