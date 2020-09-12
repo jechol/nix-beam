@@ -27,7 +27,7 @@ jobs:
 
       - run: |
           bundle
-          bundle exec ruby hello.rb
+          bundle exec ruby update_releases.rb
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
