@@ -2,11 +2,9 @@
 
 require 'octokit'
 
-default_template =
-
-  def get_tarball_url(r)
-    r[:assets].map { |a| a[:browser_download_url] }.filter { |url| url.end_with?('.tar.gz') }.first
-  end
+def get_tarball_url(r)
+  r[:assets].map { |a| a[:browser_download_url] }.filter { |url| url.end_with?('.tar.gz') && !url.include('bundle') }.first
+end
 
 def get_version(r)
   r[:tag_name].match(/([\d\.]+)/)[1]
@@ -77,4 +75,4 @@ def write_new_releases
   fetch_new_releases.map { |r| write_release(r) }
 end
 
-write_new_releases
+write_new_releases if ENV['GITHUB_ACTIONS']
