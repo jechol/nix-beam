@@ -62,7 +62,7 @@ def fetch_new_releases
   otp = client.repo 'erlang/otp'
   releases = otp.rels[:releases].get.data
 
-  releases.filter { |r| new_version?(get_version(r)) }
+  releases.filter { |r| new_version?(get_version(r)) }.take(2)
 end
 
 def write_release(r)
@@ -74,5 +74,7 @@ def write_release(r)
 end
 
 def write_new_releases
-  fetch_new_releases().map(&:write_release)
+  fetch_new_releases.map { |r| write_release(r) }
 end
+
+write_new_releases
