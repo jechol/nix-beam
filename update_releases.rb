@@ -73,7 +73,7 @@ def fetch_new_releases
   fetch_releases.filter do |r|
     v = get_version(r)
     new_version?(v) && not_rc_or_patch?(v)
-  end.take(2)
+  end
 end
 
 def write_version(version)
