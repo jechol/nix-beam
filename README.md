@@ -66,7 +66,6 @@ On the other hands, `beam.all` includes every combinations, but not cached.
 For example,
 
 - `beam.main.packages.erlang_23_0.elixirs.elixir_1_10_0` : Elixir 1.10.0 on Erlang 23.0 (cached)
-- `beam.all.packages.erlang_22_3.elixirs.elixir_1_10_4` : Elixir 1.10.4 on 22.3 (not cached)
 - `beam.all.erlangs.erlang_22_3_javac_odbc` : Erlang 22.3 with support for Java and ODBC (not cached)
 
 You can navigate through packages with `nix repl`:
