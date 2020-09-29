@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'octokit'
+require 'semantic'
 
 def get_tarball_url(version)
   "https://github.com/erlang/otp/archive/OTP-#{version}.tar.gz"
@@ -29,6 +30,10 @@ def not_rc_or_patch?(version)
   # 21.3.0 => true
   # 21.3.3 => false
   version.match(/\A\d+\.\d+(?:\.0)?\Z/)
+end
+
+def version_in_range?(version)
+  version.split('.').first.to_i >= 18
 end
 
 def nix_prefetch_sha256(url)
@@ -72,7 +77,7 @@ end
 def fetch_new_releases
   fetch_releases.filter do |r|
     v = get_version(r)
-    new_version?(v) && not_rc_or_patch?(v)
+    new_version?(v) && not_rc_or_patch?(v) && version_in_range?(v)
   end
 end
 
