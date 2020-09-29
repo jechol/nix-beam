@@ -7,7 +7,7 @@ def get_tarball_url(version)
 end
 
 def get_version(r)
-  r[:tag_name].gsub('OTP-', '')
+  r[:name].gsub('OTP-', '')
 end
 
 def dir(version)
@@ -66,7 +66,7 @@ end
 def fetch_releases
   client = Octokit::Client.new(access_token: ENV['GITHUB_TOKEN'])
   client.auto_paginate = true
-  client.releases 'erlang/otp'
+  client.tags 'erlang/otp'
 end
 
 def fetch_new_releases
