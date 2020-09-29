@@ -2,7 +2,8 @@
 , mainOnly }:
 
 let
-  releases = util.findByPrefix ./. (baseNameOf ./.);
+  # releases = util.findByPrefix ./. (baseNameOf ./.);
+  releases = [ ./R17.5.nix ];
 
   buildOpts = {
     wxGTK = wxGTK30;
