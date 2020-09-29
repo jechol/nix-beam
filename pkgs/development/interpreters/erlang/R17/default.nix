@@ -3,7 +3,9 @@
 
 let
   # releases = util.findByPrefix ./. (baseNameOf ./.);
-  releases = [ ./R17.5.nix ];
+  # There's no way to compile even latest R17.5 on Linux with following error:
+  # bash: ../bin/diameterc: /usr/bin/env: bad interpreter: No such file or directory
+  releases = [ ];
 
   buildOpts = {
     wxGTK = wxGTK30;
