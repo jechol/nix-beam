@@ -58,11 +58,6 @@ let
     version = "1.1.6";
     sha256 = "bdb0d2471f453c88ff3908e7686f86f9be327d065cc1ec16fa4540197ea04680";
   };
-  # hex_core = fetchHex {
-  #   pkg = "hex_core";
-  #   version = "0.4.0";
-  #   sha256 = "8ace8c6cfa10df4cb8be876f42f7446890e124203c094cc7b4e7616fb8de5d7f";
-  # };
 
 in stdenv.mkDerivation rec {
   pname = "rebar3";
@@ -72,7 +67,7 @@ in stdenv.mkDerivation rec {
     owner = "erlang";
     repo = pname;
     rev = version;
-    sha256 = "0936ix7lfwsamssap58b265zid7x2m97azrr2qpjcln3xysd16lg";
+    sha256 = "113yy3scj6dxf0mr1y7jivrh4gdcyhp2wr91j9gc53v9q2jxc8ly";
   };
 
   bootstrapper = ./rebar3-nix-bootstrap;
@@ -93,7 +88,6 @@ in stdenv.mkDerivation rec {
     cp --no-preserve=mode -R ${providers} _checkouts/providers
     cp --no-preserve=mode -R ${relx} _checkouts/relx
     cp --no-preserve=mode -R ${ssl_verify_fun} _checkouts/ssl_verify_fun
-    # cp --no-preserve=mode -R ${hex_core} _checkouts/hex_core
     # Bootstrap script expects the dependencies in _build/default/lib
     # TODO: Make it accept checkouts?
     for i in _checkouts/* ; do
