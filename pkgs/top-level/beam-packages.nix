@@ -2,7 +2,7 @@
 
 with lib.attrsets;
 let
-  erlangs = (callPackage ../development/interpreters/erlang/all-versions.nix {
+  erlang = (callPackage ../development/interpreters/erlang/all-versions.nix {
     inherit util;
     mainOnly = false;
   });
@@ -10,32 +10,26 @@ let
   # rebar and rebar3 is self contained so that doesn't need to be compiled with every erlang versions,
   # and not compilable on erlang 23.
   # rebar = callPackage ../development/tools/build-managers/rebar {
-  #   erlang = erlangs.erlang_22_0;
+  #   erlang = erlang.erlang_22_0;
   # };
   # rebar3 = callPackage ../development/tools/build-managers/rebar3 {
-  #   erlang = erlangs.erlang_22_0;
+  #   erlang = erlang.erlang_22_0;
   # };
 
-  packages = (mapAttrs (_: erlang:
+  pkg = (mapAttrs (_: erlang:
     util.recurseIntoAttrs
     (callPackage ../development/beam-modules/all-versions.nix {
       inherit erlang util;
       mainOnly = false;
-    })) (util.filterDerivations erlangs));
+    })) (util.filterDerivations erlang));
 
-  main_erlangs = util.recurseIntoAttrs (erlangs.override { mainOnly = true; });
+  # main_erlang = util.recurseIntoAttrs (erlang.override { mainOnly = true; });
 
-  main_packages = util.recurseIntoAttrs (mapAttrs (_: erlang:
-    util.recurseIntoAttrs
-    (callPackage ../development/beam-modules/all-versions.nix {
-      inherit erlang util;
-      mainOnly = true;
-    })) (util.filterDerivations main_erlangs));
+  # main_pkg = util.recurseIntoAttrs (mapAttrs (_: erlang:
+  #   util.recurseIntoAttrs
+  #   (callPackage ../development/beam-modules/all-versions.nix {
+  #     inherit erlang util;
+  #     mainOnly = true;
+  #   })) (util.filterDerivations main_erlang));
 
-in util.recurseIntoAttrs {
-  all = util.recurseIntoAttrs { inherit erlangs packages; };
-  main = util.recurseIntoAttrs {
-    erlangs = main_erlangs;
-    packages = main_packages;
-  };
-}
+in util.recurseIntoAttrs { inherit erlang pkg; }
