@@ -12,7 +12,4 @@
 let
   util = pkgs.callPackage ./lib/util.nix { };
   beam = pkgs.callPackage ./pkgs/top-level/beam-packages.nix { inherit util; };
-in util.recurseIntoAttrs {
-  # beam = pkgs.callPackage ./pkgs/top-level/beam-packages.nix { inherit util; };
-  beam = util.recurseIntoAttrs beam;
-}
+in util.recurseIntoAttrs (with beam; { inherit erlang pkg; })
