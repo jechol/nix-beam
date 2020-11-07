@@ -1,7 +1,8 @@
 { lib, openssl_1_0_2, wxGTK30, beamLib, util, deriveErlangFeatureVariants }:
 
 let
-  releases = [ ./R20.3.nix ];
+  # releases = util.findByPrefix ./. (baseNameOf ./.);
+  releases = [ ];
 
   buildOpts = { wxGTK = wxGTK30; };
 
