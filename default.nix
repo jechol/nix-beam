@@ -6,9 +6,9 @@
 # commands such as:
 #     nix-build -A mypackage
 
-{ pkgs ?
-  (import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/20.09.tar.gz")
-    { }) }:
+{ pkgs ? (import
+  (fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-20.09.tar.gz")
+  { }) }:
 let
   util = pkgs.callPackage ./lib/util.nix { };
   beam = pkgs.callPackage ./pkgs/top-level/beam-packages.nix { inherit util; };
