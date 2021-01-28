@@ -1,7 +1,7 @@
 { stdenv, fetchFromGitHub, fetchHex, fetchpatch, erlang, tree }:
 
 let
-  version = "3.14.1";
+  version = "3.14.3";
 
   bbmustache = fetchHex {
     pkg = "bbmustache";
@@ -20,8 +20,8 @@ let
   };
   cth_readable = fetchHex {
     pkg = "cth_readable";
-    version = "1.4.8";
-    sha256 = "46c3bb14df581dc7a9dc0cb9e8c755bff596665fb9a23148dd76e3a200804e90";
+    version = "1.4.9";
+    sha256 = "096s305v636zq4lxvp2n7447k9n5nhqg08iwpcpmyv04vfmspiml";
   };
   erlware_commons = fetchHex {
     pkg = "erlware_commons";
@@ -48,25 +48,15 @@ let
     version = "1.8.1";
     sha256 = "e45745ade9c476a9a469ea0840e418ab19360dc44f01a233304e118a44486ba0";
   };
-  relx = fetchFromGitHub {
-    # Forked from erlware/relx tag v4.0.2 to fix file permission issue that happens when
-    # executing `rebar3 as prod compile,tar`.
-    # TODO: Change back to hex when back-port is done.
-    owner = "jechol";
-    repo = "relx";
-    rev = "a58c6902271540217f4256a758d3ecbc4a1410c8";
-    sha256 = "0prpfv3q4pibyk59mn25z8yv2h14r4hwbs7dpmlmmpiz92lmmrg8";
+  relx = fetchHex {
+    pkg = "relx";
+    version = "4.2.0";
+    sha256 = "1zyis1a7w3kw5p5r30b0j1mfpwzqfbpjnq046l1h8bpzn7rlpylm";
   };
   ssl_verify_fun = fetchHex {
     pkg = "ssl_verify_fun";
     version = "1.1.6";
     sha256 = "bdb0d2471f453c88ff3908e7686f86f9be327d065cc1ec16fa4540197ea04680";
-  };
-
-  support_prefetched_deps = fetchpatch {
-    url =
-      "https://github.com/jechol/rebar3/commit/b54fad92cda396936ab1e8f5b6d5138f7ed8a8e7.patch";
-    sha256 = "1nk8ifkr1yyrxrkvx8hmjib2whn0lvvsz109ml15niqiv5wpbqrr";
   };
 
 in stdenv.mkDerivation rec {
@@ -77,10 +67,8 @@ in stdenv.mkDerivation rec {
     owner = "erlang";
     repo = pname;
     rev = version;
-    sha256 = "113yy3scj6dxf0mr1y7jivrh4gdcyhp2wr91j9gc53v9q2jxc8ly";
+    sha256 = "1qp7lwhgjxp6xkba96m31f94v49h0rf9nj9ll7f87a4j53ipnpjh";
   };
-
-  patches = [ support_prefetched_deps ];
 
   bootstrapper = ./rebar3-nix-bootstrap;
 
