@@ -2,7 +2,7 @@
 
 let
   # releases = util.findByPrefix ./. (baseNameOf ./.);
-  releases = [ ./R22.0.nix ];
+  releases = [ ];
 
   buildOpts = {
     wxGTK = wxGTK30;
