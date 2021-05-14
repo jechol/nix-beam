@@ -24,8 +24,8 @@ let
       fetchHex = callPackageWithSelf ./fetch-hex.nix { };
 
     in rec {
-      rebar = annotateErlangInVersion
-        (callPackage ../tools/build-managers/rebar { inherit erlang; });
+      # rebar = annotateErlangInVersion
+      #   (callPackage ../tools/build-managers/rebar { inherit erlang; });
       rebar3 = annotateErlangInVersion
         (callPackage ../tools/build-managers/rebar3 {
           inherit erlang fetchHex;
