@@ -1,4 +1,4 @@
-{ lib, openssl_1_0_2, wxGTK30, beamLib, util, deriveErlangFeatureVariants }:
+{ lib, openssl_1_1, wxGTK30, beamLib, util, deriveErlangFeatureVariants }:
 
 let
   releases = util.findByPrefix ./. (baseNameOf ./.);
