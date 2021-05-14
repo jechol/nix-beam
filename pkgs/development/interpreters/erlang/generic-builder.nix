@@ -71,8 +71,9 @@ in stdenv.mkDerivation ({
     ./otp_build autoconf
   '';
 
-  configureFlags =
-    [ "--with-ssl=${openssl.dev} --with-ssl-incl=${openssl.dev}" ]
+  configureFlags = [ "--with-ssl=${pkgs.lib.getOutput "out" openssl}" ] ++ [
+    "--with-ssl-incl=${pkgs.lib.getDev openssl}"
+  ] # This flag was introduced in R24
     ++ optional enableThreads "--enable-threads"
     ++ optional enableSmpSupport "--enable-smp-support"
     ++ optional enableKernelPoll "--enable-kernel-poll"
